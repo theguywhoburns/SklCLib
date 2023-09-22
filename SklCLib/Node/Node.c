@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "Node.h"
 
 Node Node_Create(void* data, unsigned long size) {

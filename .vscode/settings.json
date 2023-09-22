@@ -8,6 +8,9 @@
         "memory.h": "c",
         "stdlib.h": "c",
         "cstring": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "unordered_map": "cpp",
+        "linkedlist.h": "c",
+        "binarysearchtree.h": "c"
     }
 }

@@ -25,7 +25,7 @@ LinkedList LinkedList_Create() {
     return new_list;
 }
 
-void LinkedList_destroy(LinkedList *linked_list) {
+void LinkedList_Destroy(LinkedList *linked_list) {
     for(unsigned int i = 0; i < linked_list->length; i++) {
         linked_list->remove(linked_list, 0);
     }

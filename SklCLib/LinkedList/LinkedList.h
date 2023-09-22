@@ -6,7 +6,7 @@ typedef struct LinkedList {
     int length;
 
     void (*insert)  (struct LinkedList *linked_list, unsigned int index, void *data, 
-        unsigned int size);
+        unsigned long size);
     void (*remove)  (struct LinkedList *linked_list, unsigned int index);
     void*(*retrieve)(struct LinkedList *linked_list, unsigned int index);  
     void (*sort)(    struct LinkedList *linked_list, int (*compare)(void *a, void *b));
@@ -15,6 +15,6 @@ typedef struct LinkedList {
 } LinkedList;
 
 LinkedList LinkedList_Create();
-void LinkedList_destroy(LinkedList *linked_list);
+void LinkedList_Destroy(LinkedList *linked_list);
 
 #endif //_LINKED_LIST_H_

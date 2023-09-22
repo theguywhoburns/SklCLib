@@ -1,16 +1,6 @@
 #ifndef  _NODE_H_
 #define  _NODE_H_
 
-typedef enum DataTypes {
-    Special,
-    Int,
-    Long,
-    Float,
-    Double,
-    Char,
-    Bool
-} DataTypes;
-
 typedef struct Node {
     void* data;
 
