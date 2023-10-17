@@ -40,11 +40,18 @@ vector _vector_create(unsigned long long capacity, unsigned long long stride) {
     return v;
 }
 
+vector* _vector_create_ptr(unsigned long long capacity, unsigned long long stride) {
+    vector* v = malloc(sizeof(vector));
+    assert(v != NULL);
+    *v = _vector_create(capacity, stride);
+    v->is_struct_ptr = true;
+}
+
 void vector_destroy(vector* vec) {
     free(vec->data);
     vec->data = NULL;
     memset(vec, 0, sizeof(vector));
-    //free(vec);
+    if(vec->is_struct_ptr) free(vec);
 }
 
 void push_back(struct _vector* vec, const void* data) {

@@ -1,6 +1,7 @@
 #ifndef _SKLC_LIB_VECTOR_H_
 #define _SKLC_LIB_VECTOR_H_
 
+#include <stdbool.h>
 
 // Used by the defines, DONT'USE IT BY YOURSELF
 typedef struct _vector { 
@@ -26,15 +27,20 @@ typedef struct _vector {
     void (*resize)(struct _vector* vec);
 
     // adds passed length to the current capacity
+    
     void (*reserve)(struct _vector* vec, unsigned long long capacity);
 
+    bool is_struct_ptr;
+    
 } _vector;
 
 #define vector _vector
 
 vector _vector_create(unsigned long long capacity, unsigned long long stride);
+vector* _vector_create_ptr(unsigned long long capacity, unsigned long long stride);
 void vector_destroy(vector* vec);
 
 #define vector_create(type) _vector_create(1, sizeof(type))
+#define vector_create_ptr(type) _vector_create_ptr(1, sizeof(type))
 
 #endif//_SKLC_LIB_VECTOR_H_

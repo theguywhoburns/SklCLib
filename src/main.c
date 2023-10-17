@@ -18,12 +18,11 @@ int main() {
             for(int j = 0; j < 100; ++j) {
                 printf("Vector#%d, value#%d: %d\n", i, j, ((int*)print_vec.data)[j]);
             }
-            vector_destroy(&print_vec); // Destroy the vector using its address
+            // Destroy the vector using its address
+            vector_destroy(&print_vec);
         }
     }
 
     vector_destroy(&vector_of_vectors);
-
-    printf("Hello World!");
     return 0;
 }
