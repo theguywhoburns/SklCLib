@@ -65,6 +65,7 @@ void* pop_back(struct _vector* vec) {
     unsigned long long addr = (unsigned long long)vec->data;
     addr += (vec->length * vec->stride);
     void* ret = malloc(vec->stride);
+    assert(ret != NULL);
     memcpy(ret, (void*)addr, vec->stride);
     return ret;
 }
@@ -82,6 +83,7 @@ void insert_at(struct _vector* vec, const void* data, unsigned long long index) 
 void* remove_at(struct _vector* vec, unsigned long long index) {
     assert(index < vec->length);
     void* ret = malloc(vec->stride);
+    assert(ret != NULL);
     memcpy(ret, (char*)vec->data + index * vec->stride, vec->stride);
     memmove((char*)vec->data + index * vec->stride, (char*)vec->data + (index + 1) * vec->stride, (vec->length - index - 1) * vec->stride);
     vec->length--;
@@ -94,12 +96,14 @@ void clear(struct _vector* vec) {
 
 void resize(struct _vector* vec) {
     vec->data = realloc(vec->data, vec->length * vec->stride);
+    assert(vec->data != NULL);
     vec->capacity = vec->length;
 }
 
 // adds passed length to the current capacity
 void reserve(struct _vector* vec, unsigned long long capacity) {
     void* temp_data = malloc((vec->capacity + capacity) * vec->stride);
+    assert(temp_data != NULL);
     memcpy(temp_data, vec->data, vec->capacity * vec->stride);
     free(vec->data);
     vec->data = temp_data;

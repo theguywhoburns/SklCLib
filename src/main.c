@@ -16,7 +16,7 @@ int main() {
         if (print_vec_ptr != NULL) {
             vector print_vec = *print_vec_ptr;
             for(int j = 0; j < 100; ++j) {
-                printf("Vector#%lld, value#%lld: %lld\n", i, j, ((int*)print_vec.data)[j]);
+                printf("Vector#%d, value#%d: %d\n", i, j, ((int*)print_vec.data)[j]);
             }
             vector_destroy(&print_vec); // Destroy the vector using its address
         }
