@@ -2,15 +2,9 @@
     "files.associations": {
         "*.embeddedhtml": "html",
         "*.asm": "nasm",
-        "limits.h": "c",
-        "hashtable.h": "c",
-        "stdint.h": "c",
-        "memory.h": "c",
-        "stdlib.h": "c",
-        "cstring": "c",
-        "string.h": "c",
-        "unordered_map": "cpp",
-        "linkedlist.h": "c",
-        "binarysearchtree.h": "c"
+        "*.h": "c",
+        "*.hpp": "cpp",
+        "xstring": "c",
+        "xutility": "c"
     }
 }
