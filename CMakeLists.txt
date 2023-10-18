@@ -13,7 +13,6 @@ include_directories(
 if(MSVC)
     add_compile_options(
         /W4 # Enable all warnings.
-        /ws4201 # Allow unnamed structs/unions.
         # Don't suggest the _s nonsence functions.
         /D_CRT_SECURE_NO_WARNINGS
         /D_CRT_SECURE_NO_WARNINGS_GLOBALS
@@ -30,12 +29,13 @@ else()
         -g
         -D_CRT_SECURE_NO_WARNINGS
     )
-    add_link_options(-fsanitize=address)
 endif()
 
 file(GLOB_RECURSE SRCS
     "${PROJECT_SOURCE_DIR}/src/*"
+    "${PROJECT_SOURCE_DIR}/src/**"
     "${PROJECT_SOURCE_DIR}/include/*"
+    "${PROJECT_SOURCE_DIR}/include/**"
 )
 
 # comment

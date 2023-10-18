@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "sklc_lib/vector/vector.h"
+#include "sklc_lib/vector.h"
 
 void set_at(struct _vector* vec, unsigned long long index, void* val) {assert(index <= vec->capacity); unsigned long long addr = (unsigned long long)vec->data; addr += index; memcpy((void*)addr, val, vec->stride);}
 void*get_at(struct _vector* vec, unsigned long long index) {assert(index <= vec->capacity); unsigned long long addr = (unsigned long long)vec->data; return (void*)addr;}
@@ -45,6 +45,7 @@ vector* _vector_create_ptr(unsigned long long capacity, unsigned long long strid
     assert(v != NULL);
     *v = _vector_create(capacity, stride);
     v->is_struct_ptr = true;
+    return v;
 }
 
 void vector_destroy(vector* vec) {
@@ -56,7 +57,7 @@ void vector_destroy(vector* vec) {
 
 void push_back(struct _vector* vec, const void* data) {
     if (vec->length == vec->capacity) {
-        reserve(vec, vec->capacity + 1);
+        reserve(vec, vec->capacity);
     }
     unsigned long long addr = (unsigned long long)vec->data;
     addr += (vec->length * vec->stride);
