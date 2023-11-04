@@ -15,7 +15,16 @@ typedef struct _wstring {
     unsigned long long length;
 } wstring;
 
+// will be abstracted to another library
+#pragma region str_utils
+
+void string_str_to_wstr(wstring* dest, const string* src);
+void string_wstr_to_str(string* dest, const wstring* src);
+
+#pragma endregion str_utils
+
 #pragma region string
+string string_create();
 string string_create_ccp(const char* value);
 string string_create_str(string value);
 void string_destroy(string* str);
@@ -32,6 +41,7 @@ bool string_equals_ccp_ccp(const char* str1, const char* str2);
 #pragma endregion string
 
 #pragma region wstring
+wstring wstring_create();
 wstring wstring_create_wcp(const wchar* value);
 wstring wstring_create_wstr(wstring value);
 void wstring_destroy(wstring* str);

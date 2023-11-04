@@ -4,8 +4,18 @@
 
 #include "sklc_lib/vector.h"
 
-void set_at(struct _vector* vec, unsigned long long index, void* val) {assert(index <= vec->capacity); unsigned long long addr = (unsigned long long)vec->data; addr += index; memcpy((void*)addr, val, vec->stride);}
-void*get_at(struct _vector* vec, unsigned long long index) {assert(index <= vec->capacity); unsigned long long addr = (unsigned long long)vec->data; return (void*)addr;}
+void set_at(struct _vector* vec, unsigned long long index, void* val) {
+    assert(index <= vec->capacity);
+    unsigned long long addr = (unsigned long long)vec->data; 
+    addr += index; 
+    memcpy((void*)addr, val, vec->stride);
+}
+
+void*get_at(struct _vector* vec, unsigned long long index) {
+    assert(index <= vec->capacity); 
+    unsigned long long addr = (unsigned long long)vec->data; 
+    return (void*)addr;
+}
 
 void push_back(struct _vector* vec, const void* data);
 void*pop_back(struct _vector* vec);

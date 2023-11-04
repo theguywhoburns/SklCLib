@@ -15,8 +15,36 @@ unsigned long long local_wstrlen(const wchar* value) {
     return (s - value);
 }
 
+#pragma region str_utils
+
+void string_str_to_wstr(wstring* dest, const string* src) {
+    const unsigned long long total_length = src->length + 1;
+    free(dest->wstr_data);
+    dest->wstr_data = malloc(total_length * sizeof(wchar));
+    dest->length = total_length - 1;
+    mbstowcs(dest->wstr_data, src->str_data, total_length);
+}
+
+void string_wstr_to_str(string* dest, const wstring* src) {
+    const unsigned long long total_length = src->length + 1;
+    free(dest->str_data);
+    dest->length = total_length - 1;
+    dest->str_data = malloc(total_length);
+    wcstombs(dest->str_data, src->wstr_data, total_length);
+}
+
+#pragma endregion str_utils
+
 // string functions
 #pragma region string
+
+string string_create() {
+    string ret =  {0};
+    ret.length = 0;
+    ret.str_data = malloc(1);
+    ret.str_data[ret.length] = '\0';
+    return ret;
+}
 
 string string_create_ccp(const char* value) {
     string ret =  {0};
@@ -149,6 +177,14 @@ bool string_equals_ccp_ccp(const char* str1, const char* str2) {
 
 // wide string functions
 #pragma region wstring
+
+wstring wstring_create() {
+    wstring ret =  {0};
+    ret.length = 0;
+    ret.wstr_data = malloc(1 * sizeof(wchar));
+    ret.wstr_data[ret.length] = L'\0';
+    return ret;
+}
 
 wstring wstring_create_wcp(const wchar* value) {
     wstring ret =  {0};
