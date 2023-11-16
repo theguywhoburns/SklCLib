@@ -1,18 +1,18 @@
 #ifndef _SKLC_LIB_STRING_H_
 #define _SKLC_LIB_STRING_H_
 
-#include <stdbool.h>
+#include <sklc_lib/defines.h>
 
 typedef unsigned short wchar;
 
 typedef struct _string {
     char* str_data;
-    unsigned long long length;
+    u64 length;
 } string;
 
 typedef struct _wstring {
-    unsigned short* wstr_data;
-    unsigned long long length;
+    u16* wstr_data;
+    u64 length;
 } wstring;
 
 // will be abstracted to another library
@@ -20,6 +20,9 @@ typedef struct _wstring {
 
 void string_str_to_wstr(wstring* dest, const string* src);
 void string_wstr_to_str(string* dest, const wstring* src);
+
+u64 string_strlen(const char* str);
+u64 string_wstrlen(const wchar* value);
 
 #pragma endregion str_utils
 
@@ -34,6 +37,12 @@ void string_add_ccp_ccp(string* out_str, const char* str1, const char* str2);
 void string_add_str_ccp(string* out_str, string str1, const char* str2);
 void string_add_ccp_str(string* out_str, const char* str1, string str2);
 void string_add_str_str(string* out_str, string str1, string str2);
+void string_add_str_ch(string* out_str, string str1, char ch);
+void string_add_ch_str(string* out_str, char ch, string str2);
+void string_add_ch_ch(string* out_str, char ch1, char ch2);
+void string_add_ccp_ch(string* out_str, const char* str1, char ch);
+void string_add_ch_ccp(string* out_str, char ch, const char* str2);
+
 const char* string_c_str(string str);
 bool string_equals_str_str(string str1, string str2);
 bool string_equals_str_ccp(string str1, const char* str2);

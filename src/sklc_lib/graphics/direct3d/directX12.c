@@ -1,1 +1,0 @@
-#include <sklc_lib/graphics/direct3d/directX12.h>
