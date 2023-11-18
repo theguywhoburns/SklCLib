@@ -3,6 +3,7 @@
 
 #include <sklc_lib/defines.h>
 #include <sklc_lib/string.h>
+#include <sklc_lib/math/sklc_math.h>
 
 // TODO: Refactor do get rid of system-specific headers!!!
 #include <Windows.h>
@@ -11,6 +12,9 @@
 typedef struct window {
 
     int width, height, x, y;
+
+    int default_width;
+    int default_height;
 
     wchar* window_name;
 
@@ -22,6 +26,8 @@ typedef struct window {
 
     bool is_running;
 
+    void* wnd_context;
+
 } *window;
 
 window window_create(
@@ -31,7 +37,7 @@ window window_create(
     int x,
     int y);
 
-bool window_update(window wnd);
+bool window_update(window wnd, bool update_window_data);
 
 void window_destroy(window wnd);
 

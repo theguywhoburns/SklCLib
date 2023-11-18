@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(sklc_lib
     VERSION 0.0.1
-    LANGUAGES C
+    LANGUAGES C CXX
 )
 
 include_directories(
@@ -38,12 +38,16 @@ file(GLOB_RECURSE SRCS
     "${PROJECT_SOURCE_DIR}/include/**"
 )
 
-# comment
+#set(OpenGlLibs opengl32)
 
 add_executable(sklc_lib ${SRCS})
 set_property(TARGET sklc_lib PROPERTY C_STANDARD 17)
+set_property(TARGET sklc_lib PROPERTY CXX_STANDARD 17)
 set_property(TARGET sklc_lib PROPERTY C_STANDARD_REQUIRED true)
+set_property(TARGET sklc_lib PROPERTY CXX_STANDARD_REQUIRED true)
 target_include_directories(sklc_lib PUBLIC 
     "${PROJECT_SOURCE_DIR}/include"
     "${PROJECT_SOURCE_DIR}/src"
 )
+
+#target_link_libraries(sklc_lib ${OpenGlLibs})

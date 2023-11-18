@@ -28,7 +28,9 @@ window window_create(
 
 	wcscpy_s(ret->window_name, string_strlen(window_name) + 1, (wchar*)TEXT(window_name));
 	ret->width = width;
+	ret->default_width = width;
 	ret->height = height;
+	ret->default_height = height;
 	ret->x = x;
 	ret->y = y;
 
@@ -61,32 +63,51 @@ window window_create(
 
 	/* - Create and Display our Window  - */
 
+	RECT rc = { 0,0,ret->width,ret->height };
+	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, false);
+
 	ret->wnd_handle = CreateWindowW(__SKLC_WNDCLASSNAME, ret->window_name, WS_OVERLAPPEDWINDOW,
-		ret->x, ret->y, ret->width, ret->height, NULL, NULL, GetHInstance(), NULL);
+		ret->x, ret->y, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, GetHInstance(), NULL);
 	if (!ret->wnd_handle) {
 		MessageBoxW(0, L"Failed to Create Window!.", 0, 0);
 		return 0; 
 	}
 
+	// Will be used later
+	SetWindowLongPtr(ret->wnd_handle, GWLP_USERDATA, (LONG_PTR)ret);
+
 
 	ShowWindow(ret->wnd_handle, SW_SHOW);
-	
+	UpdateWindow(ret->wnd_handle);
+
 	ret->is_running = true;
 
 	return ret;
 }
 
-bool window_update(window wnd) {
-	MSG msg = { 0 };
+bool window_update(window wnd, bool update_window_data) {
+	MSG msg = {0};
 	while (PeekMessageA(&msg, NULL, 0, 0, PM_REMOVE)) {
-        TranslateMessage(&msg);
+        if(msg.message == WM_QUIT) {
+			wnd->is_running = false;
+			continue;
+		}
+
+		TranslateMessage(&msg);
         DispatchMessageA(&msg);
     }
-	if(msg.message == WM_QUIT) wnd->is_running = false;
+	if(update_window_data) {
+		RECT rc = {0};
+		GetClientRect(wnd->wnd_handle, &rc);
+		wnd->width = rc.right-rc.left;
+		wnd->height= rc.bottom-rc.top;
+	}
+	
 	return wnd->is_running;
 }
 
 void window_destroy(window wnd) {
+	DestroyWindow(wnd->wnd_handle);
 	free(wnd->window_name);
 	free(wnd);
 }

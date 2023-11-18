@@ -102,6 +102,7 @@ static void* get_proc(const char *namez);
 #undef APIENTRY
 #endif
 #include <windows.h>
+#pragma comment(lib, "opengl32.lib")
 static HMODULE libGL;
 
 typedef void* (APIENTRYP PFNWGLGETPROCADDRESSPROC_PRIVATE)(const char*);

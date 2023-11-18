@@ -5,13 +5,13 @@
 #include <sklc_lib/string.h>
 
 // Used for custom hashmap, you can use it if you want to
-u64 hash_array_ccp_u64(const char* data, u64 array_length);
-u64 hash_array_string_u64(string data, u64 array_length);
-u64 hash_array_custom_data_u64(void* data, u64 data_size, u64 array_length);
+u32 hash_array_ccp_u32(const char* data, u32 array_length);
+u32 hash_array_string_u32(string data, u32 array_length);
+u32 hash_array_custom_data_u32(void* data, u32 data_size, u32 array_length);
 
-u64 hash_ccp_u64(const char* data);
-u64 hash_string_u64(string data);
-u64 hash_custom_data_u64(void* data, u64 data_size);
+u32 hash_ccp_u32(const char* data);
+u32 hash_string_u32(string data);
+u32 hash_custom_data_u32(void* data, u32 data_size);
 
 
 

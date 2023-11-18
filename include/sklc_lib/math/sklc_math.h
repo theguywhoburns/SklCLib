@@ -33,19 +33,19 @@
 string conv(int val, int base);
 string fconv(float val, int base); // Not implemented
 
-f32 sin(f32 x);
-f32 cos(f32 x);
-f32 tan(f32 x);
-f32 acos(f32 x);
-f32 sqrt(f32 x);
-f32 abs(f32 x);
+f32 skl_sin(f32 x);
+f32 skl_cos(f32 x);
+f32 skl_tan(f32 x);
+f32 skl_acos(f32 x);
+f32 skl_sqrt(f32 x);
+f32 skl_abs(f32 x);
 
-i32 random();
-i32 random_in_range(i32 min, i32 max);
-f32 frandom();
-f32 frandom_in_range(f32 min, f32 max);
+i32 skl_random();
+i32 skl_random_in_range(i32 min, i32 max);
+f32 skl_frandom();
+f32 skl_frandom_in_range(f32 min, f32 max);
 
-INLINE vec2 vec2_create(f32 x, f32 y) {
+INLINE vec2 skl_vec2_create(f32 x, f32 y) {
     vec2 ret;
     ret.x = x;
     ret.y = y;
