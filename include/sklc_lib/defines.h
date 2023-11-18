@@ -8,6 +8,16 @@
     #define false 0
 #endif
 
+
+/*----IMPORTANT----
+
+if you want to use X Window system, define USE_X_WINDOW_SYS before including any of the folowing headers:
+    #include <sklc_lib/internal/glad/glad_glx.h>
+
+-----------------*/
+
+
+
 // May be needed for library user to check the library version
 #define __SKLC_VERSION 1
 #define __SKLC_WNDCLASSNAME L"SKLCWND01"
@@ -51,7 +61,7 @@ typedef double  f64;
     #define SKLC_PLATFORM_ANDROID
 #elif defined(__linux__)
     // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
-    #define SKLC_PLATFORM_ANDROID
+    #define SKLC_PLATFORM_LINUX
 #elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)
     #include <sys/param.h>
     #if defined(BSD)
