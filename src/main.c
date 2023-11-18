@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <sklc_lib/graphics/window.h>
+#include <sklc_lib/utils/function.h>
 
 int main() {
     
@@ -8,6 +9,8 @@ int main() {
     while(window_update(wnd)) {
     
     }
+    
+    
 
     window_destroy(wnd);    
 
