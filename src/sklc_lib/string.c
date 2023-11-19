@@ -210,7 +210,7 @@ const char* string_c_str(string str) {
     return (const char*)str.str_data;
 }
 
-bool string_equals_str_str(string str1, string str2) {
+b8 string_equals_str_str(string str1, string str2) {
     if(str1.length != str2.length) return false;
     for(u64 i = 0; i < str1.length; ++i) {
         if(str1.str_data[i] != str2.str_data[i]) return false;
@@ -218,7 +218,7 @@ bool string_equals_str_str(string str1, string str2) {
     return true;
 }
 
-bool string_equals_str_ccp(string str1, const char* str2) {
+b8 string_equals_str_ccp(string str1, const char* str2) {
     if(str1.length != string_strlen(str2)) return false;
     for(u64 i = 0; i < str1.length; ++i) {
         if(str1.str_data[i] != str2[i]) return false;
@@ -226,7 +226,7 @@ bool string_equals_str_ccp(string str1, const char* str2) {
     return true;
 }
 
-bool string_equals_ccp_ccp(const char* str1, const char* str2) {
+b8 string_equals_ccp_ccp(const char* str1, const char* str2) {
     u64 length = string_strlen(str1);
     if(length != string_strlen(str2)) return false;
     for(u64 i = 0; i < length; ++i) {
@@ -412,7 +412,7 @@ const wchar* wstring_wc_str(wstring str) {
     return str.wstr_data;
 }
 
-bool wstring_equals_wstr_wstr(wstring str1, wstring str2) {
+b8 wstring_equals_wstr_wstr(wstring str1, wstring str2) {
     if(str1.length != str2.length) return false;
     for(u64 i = 0; i < str1.length; ++i) {
         if(str1.wstr_data[i] != str2.wstr_data[i]) return false;
@@ -420,7 +420,7 @@ bool wstring_equals_wstr_wstr(wstring str1, wstring str2) {
     return true;
 }
 
-bool wstring_equals_wstr_wcp(wstring str1, const wchar* str2) {
+b8 wstring_equals_wstr_wcp(wstring str1, const wchar* str2) {
     if(str1.length != wstring_wstrlen(str2)) return false;
     for(u64 i = 0; i < str1.length; ++i) {
         if(str1.wstr_data[i] != str2[i]) return false;
@@ -428,7 +428,7 @@ bool wstring_equals_wstr_wcp(wstring str1, const wchar* str2) {
     return true;
 }
 
-bool wstring_equals_wcp_wcp(const wchar* str1, const wchar* str2) {
+b8 wstring_equals_wcp_wcp(const wchar* str1, const wchar* str2) {
     u64 length = wstring_wstrlen(str1);
     if(length != wstring_wstrlen(str2)) return false;
     for(u64 i = 0; i < length; ++i) {

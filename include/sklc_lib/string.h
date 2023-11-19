@@ -44,9 +44,9 @@ void string_add_ccp_ch(string* out_str, const char* str1, char ch);
 void string_add_ch_ccp(string* out_str, char ch, const char* str2);
 
 const char* string_c_str(string str);
-bool string_equals_str_str(string str1, string str2);
-bool string_equals_str_ccp(string str1, const char* str2);
-bool string_equals_ccp_ccp(const char* str1, const char* str2);
+b8 string_equals_str_str(string str1, string str2);
+b8 string_equals_str_ccp(string str1, const char* str2);
+b8 string_equals_ccp_ccp(const char* str1, const char* str2);
 #pragma endregion string
 
 #pragma region wstring
@@ -61,9 +61,9 @@ void wstring_add_wstr_wcp(wstring* out_str, wstring str1, const wchar* str2);
 void wstring_add_wcp_wstr(wstring* out_str, const wchar* str1, wstring str2);
 void wstring_add_wstr_wstr(wstring* out_str, wstring str1, wstring str2);
 const wchar* wstring_wc_str(wstring str);
-bool wstring_equals_wstr_wstr(wstring str1, wstring str2);
-bool wstring_equals_wstr_wcp(wstring str1, const wchar* str2);
-bool wstring_equals_wcp_wcp(const wchar* str1, const wchar* str2);
+b8 wstring_equals_wstr_wstr(wstring str1, wstring str2);
+b8 wstring_equals_wstr_wcp(wstring str1, const wchar* str2);
+b8 wstring_equals_wcp_wcp(const wchar* str1, const wchar* str2);
 #pragma endregion wstring
 
 #endif//_SKLC_LIB_STRING_H_
