@@ -5,11 +5,6 @@ project(sklc_lib
     LANGUAGES C CXX
 )
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src
-)
-
 if(MSVC)
     add_compile_options(
         /W4 # Enable all warnings.
@@ -33,12 +28,8 @@ endif()
 
 file(GLOB_RECURSE SRCS
     "${PROJECT_SOURCE_DIR}/src/*"
-    "${PROJECT_SOURCE_DIR}/src/**"
     "${PROJECT_SOURCE_DIR}/include/*"
-    "${PROJECT_SOURCE_DIR}/include/**"
 )
-
-#set(OpenGlLibs opengl32)
 
 add_executable(sklc_lib ${SRCS})
 set_property(TARGET sklc_lib PROPERTY C_STANDARD 17)
@@ -49,5 +40,3 @@ target_include_directories(sklc_lib PUBLIC
     "${PROJECT_SOURCE_DIR}/include"
     "${PROJECT_SOURCE_DIR}/src"
 )
-
-#target_link_libraries(sklc_lib ${OpenGlLibs})

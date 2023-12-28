@@ -3,8 +3,6 @@
 
 #include <sklc_lib/defines.h>
 
-typedef unsigned short wchar;
-
 typedef struct _string {
     char* str_data;
     u64 length;

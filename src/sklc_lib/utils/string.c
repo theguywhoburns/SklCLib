@@ -1,18 +1,20 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-#include <sklc_lib/string.h>
+#include <sklc_lib/utils/string.h>
 
 u64 string_strlen(const char* str) {
     const char* s;
     for (s = str; *s; ++s);
-    return (s - str);
+    return (u64)((const char*)s - str);
 }
 
 u64 wstring_wstrlen(const wchar* value) {
     const wchar* s;
     for (s = value; *s; ++s);
-    return (s - value);
+    return (u64)((const char*)s - (u64)value);
 }
 
 #pragma region str_utils

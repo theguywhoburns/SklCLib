@@ -30,7 +30,7 @@ u32 hash_ccp_u32_u32ernal(const char* data, u32 data_length) {
 #pragma region etc
 
 u32 hash_array_ccp_u32(const char* data, u32 array_length) {
-    u32 data_length = string_strlen(data);
+    u32 data_length = (u32)string_strlen(data);
 
     u32 ret = hash_ccp_u32_u32ernal(data, data_length);
 
@@ -40,7 +40,7 @@ u32 hash_array_ccp_u32(const char* data, u32 array_length) {
 }
 
 u32 hash_array_string_u32(string data, u32 array_length) {
-    u32 ret = hash_ccp_u32_u32ernal(string_c_str(data), data.length);
+    u32 ret = hash_ccp_u32_u32ernal(string_c_str(data), (u32)data.length);
 
     ret = ret % array_length;
     
@@ -56,12 +56,12 @@ u32 hash_array_custom_data_u32(void* data, u32 data_size, u32 array_length) {
 }
 
 u32 hash_ccp_u32(const char* data) {
-    u32 data_length = string_strlen(data);
+    u32 data_length = (u32)string_strlen(data);
     return hash_ccp_u32_u32ernal(data, data_length);
 }
 
 u32 hash_string_u32(string data) {
-    return hash_ccp_u32_u32ernal(string_c_str(data), data.length);
+    return hash_ccp_u32_u32ernal(string_c_str(data), (u32)data.length);
 }
 
 u32 hash_custom_data_u32(void* data, u32 data_size) {

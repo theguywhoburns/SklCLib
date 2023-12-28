@@ -2,7 +2,7 @@
 #define _SKLC_LIB_UTILS_HASH_H_
 
 #include <sklc_lib/defines.h>
-#include <sklc_lib/string.h>
+#include <sklc_lib/utils/string.h>
 
 // Used for custom hashmap, you can use it if you want to
 u32 hash_array_ccp_u32(const char* data, u32 array_length);

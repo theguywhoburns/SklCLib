@@ -43,6 +43,9 @@ typedef signed long long    i64;
 typedef float   f32;
 typedef double  f64;
 
+typedef unsigned short wchar;
+
+#define BIT(x) (1 << x)
 
 // Inlining
 #ifdef _MSC_VER

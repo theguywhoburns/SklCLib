@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "sklc_lib/vector.h"
+#include "sklc_lib/utils/vector.h"
 
 void set_at(struct _vector* vec, unsigned long long index, void* val) {
     assert(index <= vec->capacity);

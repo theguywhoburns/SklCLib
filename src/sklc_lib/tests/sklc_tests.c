@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <sklc_lib/vector.h>
+#include <sklc_lib/utils/vector.h>
 #include <sklc_lib/utils/function.h>
 #include <sklc_lib/tests/sklc_tests.h>
 

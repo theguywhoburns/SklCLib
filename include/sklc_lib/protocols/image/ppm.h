@@ -1,0 +1,5 @@
+#ifndef _SKLC_LIB_PTOTOCOL_PPM_H_
+#define _SKLC_LIB_PTOTOCOL_PPM_H_
+
+
+#endif//_SKLC_LIB_PTOTOCOL_PPM_H_
