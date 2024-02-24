@@ -26,7 +26,7 @@ else()
     )
 endif()
 
-file(GLOB_RECURSE SRCS
+file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/src/*"
     "${PROJECT_SOURCE_DIR}/include/*"
 )

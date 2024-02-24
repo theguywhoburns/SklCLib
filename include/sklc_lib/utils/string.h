@@ -45,6 +45,12 @@ const char* string_c_str(string str);
 b8 string_equals_str_str(string str1, string str2);
 b8 string_equals_str_ccp(string str1, const char* str2);
 b8 string_equals_ccp_ccp(const char* str1, const char* str2);
+
+int string_find_str_str(string str1, string str2);
+int string_find_str_ccp(string str1, const char* str2);
+int string_find_ccp_str(const char* str1, string str2);
+int string_find_ccp_ccp(const char* str1, const char* str2);
+
 #pragma endregion string
 
 #pragma region wstring
