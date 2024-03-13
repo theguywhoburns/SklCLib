@@ -1,7 +1,7 @@
 #ifndef _SKLC_LIB_STRING_H_
 #define _SKLC_LIB_STRING_H_
-
 #include <sklc_lib/defines.h>
+#include <sklc_lib/utils/vector.h>
 
 typedef struct _string {
     char* str_data;
@@ -26,7 +26,7 @@ u64 string_wstrlen(const wchar* value);
 
 #pragma region string
 string string_create();
-string string_create_ccp(const char* value);
+string string_create_ccp(const char* value, u64 length);
 string string_create_str(string value);
 void string_destroy(string* str);
 void string_set_ccp(string* str, const char* value);
@@ -40,6 +40,12 @@ void string_add_ch_str(string* out_str, char ch, string str2);
 void string_add_ch_ch(string* out_str, char ch1, char ch2);
 void string_add_ccp_ch(string* out_str, const char* str1, char ch);
 void string_add_ch_ccp(string* out_str, char ch, const char* str2);
+string string_slice_str(string str, u64 start, u64 end);
+string string_slice_ccp(const char* str, u64 start, u64 end);
+vector string_split_str_str(string str, string separator);
+vector string_split_str_ccp(string str, const char* separator);
+vector string_split_ccp_ccp(const char* str, const char* separator);
+vector string_split_ccp_str(const char* str, string separator);
 
 const char* string_c_str(string str);
 b8 string_equals_str_str(string str1, string str2);
@@ -55,7 +61,7 @@ int string_find_ccp_ccp(const char* str1, const char* str2);
 
 #pragma region wstring
 wstring wstring_create();
-wstring wstring_create_wcp(const wchar* value);
+wstring wstring_create_wcp(const wchar* value, u64 length);
 wstring wstring_create_wstr(wstring value);
 void wstring_destroy(wstring* str);
 void wstring_set_wcp(wstring* str, const wchar* value);

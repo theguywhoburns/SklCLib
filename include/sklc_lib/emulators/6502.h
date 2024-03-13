@@ -2,6 +2,7 @@
 #define _SKLC_LIB_CPU_6502_H_
 
 #include <sklc_lib/defines.h>
+#include <sklc_lib/emulators/emu.h>
 
 typedef struct _memory_6502 {
     Byte data[0xFFFF];

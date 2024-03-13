@@ -48,9 +48,9 @@ string string_create() {
     return ret;
 }
 
-string string_create_ccp(const char* value) {
+string string_create_ccp(const char* value, u64 length) {
     string ret =  {0};
-    ret.length = string_strlen(value);
+    ret.length = length;
     ret.str_data = malloc(ret.length + 1);
     memcpy(ret.str_data, value, ret.length);
     ret.str_data[ret.length] = '\0';
@@ -66,14 +66,14 @@ string string_create_str(string value) {
 }
 
 void string_destroy(string* str) {
-    free(str->str_data);
+    if(str->str_data) free(str->str_data);
     str->length = 0;
     str->str_data = 0;
 }
 
 void string_set_ccp(string* str, const char* value) {
     string_destroy(str);
-    *str = string_create_ccp(value);
+    *str = string_create_ccp(value, string_strlen(value));
 }
 
 void string_set_str(string* str, string value) {
@@ -110,20 +110,6 @@ void string_add_str_ccp(string* out_str, string str1, const char* str2) {
     string_destroy(&local_str1);
 }
 
-void string_add_ccp_str(string* out_str, const char* str1, string str2) {
-    string local_str2 = string_create_str(str2);
-    string_destroy(out_str);
-    u64 length1 = string_strlen(str1);
-
-    out_str->str_data = malloc(local_str2.length + length1 + 1);
-    out_str->length = local_str2.length + length1;
-    char* ptr = out_str->str_data;
-    memcpy(ptr, str1, length1);
-    ptr+= length1;
-    memcpy(ptr, local_str2.str_data, local_str2.length);
-    out_str->str_data[local_str2.length + length1] = '\0';
-    string_destroy(&local_str2);
-}
 
 void string_add_str_str(string* out_str, string str1, string str2) {
     string local_str1 = string_create_str(str1);
@@ -207,6 +193,61 @@ void string_add_ch_ccp(string* out_str, char ch, const char* str2) {
     out_str->str_data[length + 1] = '\0';
 }
 
+string string_slice_str(string str, u64 start, u64 end) {   
+    return string_create_ccp(str.str_data + start, end - start);
+}
+
+string string_slice_ccp(const char* str, u64 start, u64 end) {
+    return string_create_ccp(str + start, end - start);
+}
+
+vector string_split_str_str(string str, string separator) {
+    vector ret = vector_create(string);
+    u64 start = 0;
+    u64 end = 0;
+    string temp_str;
+
+    while (end < str.length) {
+        temp_str = string_slice_str(str, end, end + separator.length);
+        if (string_equals_str_str(temp_str, separator)) {
+            
+            if (temp_str.length - start > 0) {
+                string to_add = string_slice_str(str, start, end);
+                ret.push_back(&ret, &to_add);
+            }
+            start = end + separator.length;
+        }
+        string_destroy(&temp_str); // Destroy temp_str here
+        end++;
+    }
+
+    if (start < end) {
+        string _str = string_slice_str(str, start, end);
+        ret.push_back(&ret, &_str);
+    }
+
+    return ret;
+}
+
+
+vector string_split_str_ccp(string str, const char* separator) {
+    string sep = string_create_ccp(separator, string_strlen(separator));
+    return string_split_str_str(str, sep);
+}
+
+vector string_split_ccp_ccp(const char* str, const char* separator) {
+    string s = string_create_ccp(str, string_strlen(str));
+    string sep = string_create_ccp(separator, string_strlen(separator));
+    vector ret = string_split_str_str(s, sep);
+    string_destroy(&s);
+    string_destroy(&sep);
+    return ret;
+}
+
+vector string_split_ccp_str(const char* str, string separator) {
+    string s = string_create_ccp(str, string_strlen(str));
+    return string_split_str_str(s, separator);
+} 
 
 const char* string_c_str(string str) {
     return (const char*)str.str_data;
@@ -251,9 +292,9 @@ wstring wstring_create() {
     return ret;
 }
 
-wstring wstring_create_wcp(const wchar* value) {
-    wstring ret =  {0};
-    ret.length = wstring_wstrlen(value);
+wstring wstring_create_wcp(const wchar* value, u64 length) {
+    wstring ret = {0};
+    ret.length = length;
     ret.wstr_data = malloc((ret.length + 1) * sizeof(wchar));
     memcpy(ret.wstr_data, value, sizeof(wchar) * ret.length);
     ret.wstr_data[ret.length] = L'\0';
@@ -276,7 +317,7 @@ void wstring_destroy(wstring* str) {
 
 void wstring_set_wcp(wstring* str, const wchar* value) {
     wstring_destroy(str);
-    *str = wstring_create_wcp(value);
+    *str = wstring_create_wcp(value, wstring_wstrlen(value));
 }
 
 void wstring_set_wstr(wstring* str, wstring value) {
@@ -437,6 +478,16 @@ b8 wstring_equals_wcp_wcp(const wchar* str1, const wchar* str2) {
         if(str1[i] != str2[i]) return false;
     }
     return true;
+}
+
+wstring wstring_slice_wstr(wstring str, u64 start, u64 end) {
+    wstring ret = wstring_create_wcp(str.wstr_data + start, end - start);
+    return ret;
+}
+
+wstring wstring_slice_wcp(const wchar* str, u64 start, u64 end) {
+    wstring ret = wstring_create_wcp(str + start, end - start);
+    return ret;
 }
 
 #pragma endregion wstring

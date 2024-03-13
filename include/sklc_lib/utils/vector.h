@@ -12,6 +12,7 @@ typedef struct _vector {
     u64 stride;  // Size of the element
     u64 length;  // Number of elements currently used
     u64 capacity;// How much items can it hold before reallocating;
+    u64 amount_of_elements_to_add_when_resizing;
 
     void (*push_back)(struct _vector* vec, const void* data);
     void* (*pop_back)(struct _vector* vec);

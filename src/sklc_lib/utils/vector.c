@@ -13,7 +13,8 @@ void set_at(struct _vector* vec, unsigned long long index, void* val) {
 
 void*get_at(struct _vector* vec, unsigned long long index) {
     assert(index <= vec->capacity); 
-    unsigned long long addr = (unsigned long long)vec->data; 
+    unsigned long long addr = (unsigned long long)vec->data;
+    addr += index * vec->stride; 
     return (void*)addr;
 }
 
@@ -47,6 +48,7 @@ vector _vector_create(unsigned long long capacity, unsigned long long stride) {
     v.set_at = set_at;
     v.get_at = get_at;
     v.remove_at = remove_at;
+    v.amount_of_elements_to_add_when_resizing = 2;
     return v;
 }
 
@@ -67,7 +69,7 @@ void vector_destroy(vector* vec) {
 
 void push_back(struct _vector* vec, const void* data) {
     if (vec->length == vec->capacity) {
-        reserve(vec, vec->capacity);
+        reserve(vec, vec->amount_of_elements_to_add_when_resizing);
     }
     unsigned long long addr = (unsigned long long)vec->data;
     addr += (vec->length * vec->stride);
@@ -91,7 +93,7 @@ void* pop_back(struct _vector* vec) {
 void insert_at(struct _vector* vec, const void* data, unsigned long long index) {
     assert(index <= vec->length);
     if (vec->length == vec->capacity) {
-        reserve(vec, vec->capacity + 1);
+        reserve(vec, vec->amount_of_elements_to_add_when_resizing);
     }
     memmove((char*)vec->data + (index + 1) * vec->stride, (char*)vec->data + index * vec->stride, (vec->length - index) * vec->stride);
     memcpy((char*)vec->data + index * vec->stride, data, vec->stride);
