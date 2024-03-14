@@ -29,10 +29,13 @@ linked_list* linked_list_create() {
 }
 
 Node* linked_list_destroy(linked_list* list, b8 destroy_nodes) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
-    printf("List first_address: %p\n", (void*)list->First);
-    printf("List first->next_address: %p\n", (void*)list->First != NULL ? list->First->next : NULL);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+        printf("List first_address: %p\n", (void*)list->First);
+        printf("List first->next_address: %p\n", (void*)list->First != NULL ? list->First->next : NULL);
+    */
+
     Node* current = list->First;
     Node* next = NULL;
 
@@ -43,8 +46,6 @@ Node* linked_list_destroy(linked_list* list, b8 destroy_nodes) {
             if (current->value != NULL) {
                 free(current->value);
             }
-        }
-        if (current != NULL) {
             free(current);
         }
         current = next;
@@ -57,45 +58,53 @@ Node* linked_list_destroy(linked_list* list, b8 destroy_nodes) {
 
 
 void linked_list_add_last(struct linked_list* list, void* value, u64 size) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+    */
 
     // Existing function code
     Node* to_add = Node_Create(value, size, NULL);
-    printf("Node Address: %p, Next Address: 0x%lx\n", (void*)to_add, (unsigned long)to_add->next);
+    //printf("Node Address: %p, Next Address: 0x%lx\n", (void*)to_add, (unsigned long)to_add->next);
     linked_list_add_last_node(list, to_add);
 }
 
 void linked_list_add_last_node(struct linked_list* list, Node* node) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
-    printf("Node Address: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+        printf("Node Address: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
+    */
 
     // Existing function code
     if (list->Last == NULL) {
         list->First = node;
-        list->Last = node;
     } else {
         list->Last->next = node;
-        list->Last = node;
     }
+
+    list->Last = node;
     list->count++;
 }
 
 void linked_list_add_first(struct linked_list* list, void* value, u64 size) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+    */
 
     // Existing function code
     Node* new_node = Node_Create(value, size, NULL);
-    printf("Node Address: %p, Next Address: 0x%lx\n", (void*)new_node, (unsigned long)new_node->next);
+    //printf("Node Address: %p, Next Address: 0x%lx\n", (void*)new_node, (unsigned long)new_node->next);
     linked_list_add_first_node(list, new_node);
 }
 
 void linked_list_add_first_node(struct linked_list* list, Node* node) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
-    printf("Node Address: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+        printf("Node Address: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
+    */
 
     // Existing function code
     Node* not_first_anymore = list->First;
@@ -105,15 +114,17 @@ void linked_list_add_first_node(struct linked_list* list, Node* node) {
 }
 
 u64 linked_list_count(struct linked_list* list) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+    */
 
     // Existing function code
     Node* node = list->First;
     u64 count = 0;
     
     while (node != NULL) {
-        printf("Node Address: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
+        //printf("Node Address: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
         count++;
         node = node->next;
     }
@@ -122,14 +133,16 @@ u64 linked_list_count(struct linked_list* list) {
 }
 
 void linked_list_clear(struct linked_list* list) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+    */
 
     // Existing function code
     Node* node = list->First;
     while (node != NULL) {
         Node* next_node = node->next;
-        printf("Node Address to Clear: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
+        //printf("Node Address to Clear: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
         Node_Destroy(node);
         free(node);
         node = next_node;
@@ -140,8 +153,10 @@ void linked_list_clear(struct linked_list* list) {
 }
 
 void* linked_list_get_at(struct linked_list* list, u64 id) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+    */
 
     // Existing function code
     Node* node = linked_list_get_node_at(list, id);
@@ -152,8 +167,10 @@ void* linked_list_get_at(struct linked_list* list, u64 id) {
 }
 
 Node* linked_list_get_node_at(struct linked_list* list, u64 id) {
-    printf("Function Name: %s\n", __func__);
-    printf("List Address: %p\n", (void*)list);
+    /*
+        printf("Function Name: %s\n", __func__);
+        printf("List Address: %p\n", (void*)list);
+    */
 
     // Existing function code
     if (id >= list->count) {
@@ -165,7 +182,7 @@ Node* linked_list_get_node_at(struct linked_list* list, u64 id) {
 
     while (node != NULL) {
         if (current_id == id) {
-            printf("Node Address at Index %lu: %p, Next Address: 0x%lx\n", id, (void*)node, (unsigned long)node->next);
+            //printf("Node Address at Index %lu: %p, Next Address: 0x%lx\n", id, (void*)node, (unsigned long)node->next);
             return node;
         }
         node = node->next;

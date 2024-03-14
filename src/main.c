@@ -28,16 +28,16 @@ int main() {
     // Free the data in each node of the string list
     Node* current_str_node = string_list->First;
     Node* next_str = NULL;
+    // Destroy the string list
+    linked_list_destroy(string_list, false);
+    
     while (current_str_node != NULL) {
         next_str = current_str_node->next;
         string_destroy((string*)current_str_node->value);
         free(current_str_node);
         current_str_node = next_str;
     }
-    
-    // Destroy the string list
-    linked_list_destroy(string_list, false);
-    
+
     // Create a linked list for vectors
     linked_list* vector_list = linked_list_create();
     
@@ -61,7 +61,7 @@ int main() {
     while (current_vec != NULL) {
         if (current_vec->value != NULL) {
             vector* vec = (vector*)current_vec->value;
-            printf("Vector: ");
+            printf("Vector: \n");
             for (size_t i = 0; i < vec->length; i++) {
                 printf("%d\n", *(int*)vec->get_at(vec, i));
             }
@@ -73,15 +73,15 @@ int main() {
     // Free the data in each node of the vector list
     Node* current_vec_node = vector_list->First;
     Node* next_vec = NULL;
+    // Destroy the vector list
+    linked_list_destroy(vector_list, false);
+    
     while (current_vec_node != NULL) {
         next_vec = current_vec_node->next;
         vector_destroy((vector*)current_vec_node->value);
         free(current_vec_node);
         current_vec_node = next_vec;
     }
-    
-    // Destroy the vector list
-    linked_list_destroy(vector_list, false);
-    
+
     return 0;
 }
