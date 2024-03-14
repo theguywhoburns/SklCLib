@@ -205,29 +205,47 @@ vector string_split_str_str(string str, string separator) {
     vector ret = vector_create(string);
     u64 start = 0;
     u64 end = 0;
-    string temp_str;
-
-    while (end < str.length) {
-        temp_str = string_slice_str(str, end, end + separator.length);
-        if (string_equals_str_str(temp_str, separator)) {
-            
-            if (temp_str.length - start > 0) {
-                string to_add = string_slice_str(str, start, end);
-                ret.push_back(&ret, &to_add);
+    string substr;
+    string temp_substr;
+    
+    while (end <= str.length - separator.length) {
+        temp_substr = string_slice_str(str, end, end + separator.length);
+        
+        printf("Start: %llu, End: %llu, Temp Substr: %s, Separator: %s\n", start, end, string_c_str(temp_substr), string_c_str(separator));
+        
+        if (string_equals_str_str(temp_substr, separator)) {
+            substr = string_slice_str(str, start, end);
+            if (substr.length > 0) {
+                printf("Substring: %s\n", string_c_str(substr));
+                ret.push_back(&ret, &substr);
+            } else {
+                printf("Empty substring\n");
+                string_destroy(&substr); // Clean up empty substring
             }
             start = end + separator.length;
+            end = start - 1; // Adjust end to recheck the separator
         }
-        string_destroy(&temp_str); // Destroy temp_str here
+        
+        string_destroy(&temp_substr); // Clean up temporary substring
         end++;
     }
-
-    if (start < end) {
-        string _str = string_slice_str(str, start, end);
-        ret.push_back(&ret, &_str);
+    
+    if (start < str.length) {
+        substr = string_slice_str(str, start, str.length);
+        if (substr.length > 0) {
+            printf("Last substring: %s\n", string_c_str(substr));
+            ret.push_back(&ret, &substr);
+        } else {
+            printf("Last empty substring\n");
+            string_destroy(&substr); // Clean up empty substring
+        }
     }
-
+    
     return ret;
 }
+
+
+
 
 
 vector string_split_str_ccp(string str, const char* separator) {
