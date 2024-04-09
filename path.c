@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <util/path.h>
 
-
-
 //WARNING: OUT POINTER WILL BE REALLOCATED
 b8 Path_Combine_2(Path* out, Path* path1, Path* path2) {
     if (!out || !path1 || !path2) return false;

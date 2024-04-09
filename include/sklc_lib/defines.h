@@ -2,43 +2,8 @@
 #ifndef _SKLC_LIB_DEFINES_H_
 #define _SKLC_LIB_DEFINES_H_
 
-#ifndef __cplusplus
-    #define bool _Bool
-    #define true 1
-    #define false 0
-#endif
-
-
-
-#ifndef NULL
-#define NULL ((void*)0)
-#endif
-
-//TODO: Static assert every type equals to the specified size
-typedef char    b8; 
-typedef int     b32;
-
-typedef unsigned char       u8;
-typedef unsigned short      u16;
-typedef unsigned int        u32;
-typedef unsigned long long  u64;
-
-typedef signed char         i8;
-typedef signed short        i16;
-typedef signed int          i32;
-typedef signed long long    i64;
-
-typedef float   f32;
-typedef double  f64;
-
-typedef unsigned short wchar;
-
-#define BIT(x) (1 << x)
-
-typedef u8  Byte; // Byte  = 1 Byte
-typedef u16 Word; // Word  = 2 Bytes
-typedef u32 DWord;// DWord = 4 Bytes
-typedef u64 QWord;// QWord = 8 Bytes
+#include <stdint.h>
+#include <stdbool.h>
 
 // Inlining
 #ifdef _MSC_VER

@@ -2,78 +2,39 @@
 #define _SKLC_LIB_STRING_H_
 #include <sklc_lib/defines.h>
 #include <sklc_lib/utils/vector.h>
-
-typedef struct _string {
-    char* str_data;
-    u64 length;
+typedef struct string {
+    char* data;
+    uint64_t len;
+    //true if owns memory, otherwise false
+    bool own;
 } string;
 
-typedef struct _wstring {
-    u16* wstr_data;
-    u64 length;
-} wstring;
+// Creates a string view that doesn't own it's memory
+#define STRING_VIEW(ccp, length) (string){.data = (ccp), .len = (length), .own = false}
 
-// will be abstracted to another library
-#pragma region str_utils
+uint64_t StringLength(const char* str);
 
-void string_str_to_wstr(wstring* dest, const string* src);
-void string_wstr_to_str(string* dest, const wstring* src);
+void StringCreate(string* ret, const char* str);
+/// @brief Advanced version of StringCreate func
+/// @param ret pointer to a var where string will be placed, cannot be null or the pgm will crash
+/// @param str CString,
+/// @param len length of a CString
+/// @param allocate tells the func if it should allocate a copy of that string(own it), or not
+void StringCreateEx(string* ret, const char* str, uint64_t len, bool allocate);
+void StringDestroy(string* str);
+void StringDuplicate(string* ret, string source);
 
-u64 string_strlen(const char* str);
-u64 string_wstrlen(const wchar* value);
-
-#pragma endregion str_utils
-
-#pragma region string
-string string_create();
-string string_create_ccp(const char* value, u64 length);
-string string_create_str(string value);
-void string_destroy(string* str);
-void string_set_ccp(string* str, const char* value);
-void string_set_str(string* str, string value);
-void string_add_ccp_ccp(string* out_str, const char* str1, const char* str2);
-void string_add_str_ccp(string* out_str, string str1, const char* str2);
-void string_add_ccp_str(string* out_str, const char* str1, string str2);
-void string_add_str_str(string* out_str, string str1, string str2);
-void string_add_str_ch(string* out_str, string str1, char ch);
-void string_add_ch_str(string* out_str, char ch, string str2);
-void string_add_ch_ch(string* out_str, char ch1, char ch2);
-void string_add_ccp_ch(string* out_str, const char* str1, char ch);
-void string_add_ch_ccp(string* out_str, char ch, const char* str2);
-string string_slice_str(string str, u64 start, u64 end);
-string string_slice_ccp(const char* str, u64 start, u64 end);
-vector string_split_str_str(string str, string separator);
-vector string_split_str_ccp(string str, const char* separator);
-vector string_split_ccp_ccp(const char* str, const char* separator);
-vector string_split_ccp_str(const char* str, string separator);
-
-const char* string_c_str(string str);
-b8 string_equals_str_str(string str1, string str2);
-b8 string_equals_str_ccp(string str1, const char* str2);
-b8 string_equals_ccp_ccp(const char* str1, const char* str2);
-
-int string_find_str_str(string str1, string str2);
-int string_find_str_ccp(string str1, const char* str2);
-int string_find_ccp_str(const char* str1, string str2);
-int string_find_ccp_ccp(const char* str1, const char* str2);
-
-#pragma endregion string
-
-#pragma region wstring
-wstring wstring_create();
-wstring wstring_create_wcp(const wchar* value, u64 length);
-wstring wstring_create_wstr(wstring value);
-void wstring_destroy(wstring* str);
-void wstring_set_wcp(wstring* str, const wchar* value);
-void wstring_set_wstr(wstring* str, wstring value);
-void wstring_add_wcp_wcp(wstring* out_str, const wchar* str1, const wchar* str2);
-void wstring_add_wstr_wcp(wstring* out_str, wstring str1, const wchar* str2);
-void wstring_add_wcp_wstr(wstring* out_str, const wchar* str1, wstring str2);
-void wstring_add_wstr_wstr(wstring* out_str, wstring str1, wstring str2);
-const wchar* wstring_wc_str(wstring str);
-b8 wstring_equals_wstr_wstr(wstring str1, wstring str2);
-b8 wstring_equals_wstr_wcp(wstring str1, const wchar* str2);
-b8 wstring_equals_wcp_wcp(const wchar* str1, const wchar* str2);
-#pragma endregion wstring
+/// @brief concatenates 2 strings together and writes the result to ret
+/// @param ret result
+/// @param str1 string, if it isn't the same variable as ret, then it doesnt need to own it's memory 
+/// @param str2 same as str1
+void StringAdd(string* ret, string str1, string str2);
+void StringSlice(string* ret, string str, uint64_t start, uint64_t end);
+/*TODO: todo  
+    vector StringSplit(string str, string separator);
+    vector StringSplitEx(string str, uint64_t amount_of_separators, string* separators);
+*/
+bool StringEquals(string str1, string str2);
+int StringFind(string str, string to_find, int id);
 
 #endif//_SKLC_LIB_STRING_H_
