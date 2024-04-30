@@ -4,7 +4,7 @@
 #include <util/path.h>
 
 //WARNING: OUT POINTER WILL BE REALLOCATED
-b8 Path_Combine_2(Path* out, Path* path1, Path* path2) {
+bool Path_Combine_2(Path* out, Path* path1, Path* path2) {
     if (!out || !path1 || !path2) return false;
 
     // Create a temporary wstring to hold the result.
@@ -27,7 +27,7 @@ b8 Path_Combine_2(Path* out, Path* path1, Path* path2) {
 }
 
 //WARNING: OUT POINTER WILL BE REALLOCATED
-b8 Path_Combine_3(Path* out, Path* path1, Path* path2, Path* path3) {
+bool Path_Combine_3(Path* out, Path* path1, Path* path2, Path* path3) {
     if (!out || !path1 || !path2 || !path3) return false;
 
     // Use Path_Combine_2 to combine the first two paths into a temporary variable.
@@ -53,7 +53,7 @@ b8 Path_Combine_3(Path* out, Path* path1, Path* path2, Path* path3) {
 }
 
 //WARNING: OUT POINTER WILL BE REALLOCATED
-b8 Path_Combine_4(Path* out, Path* path1, Path* path2, Path* path3, Path* path4) {
+bool Path_Combine_4(Path* out, Path* path1, Path* path2, Path* path3, Path* path4) {
     if (!out || !path1 || !path2 || !path3 || !path4) return false;
 
     // Use Path_Combine_3 to combine the first three paths into a temporary variable.
@@ -79,14 +79,14 @@ b8 Path_Combine_4(Path* out, Path* path1, Path* path2, Path* path3, Path* path4)
 }
 
 ///@brief WARNING: IF YOU ARE USING PATH FROM AN ARRAY AS AN OUTPUT IT WILL BE REALLOCATED AT THE END
-b8 Path_Combine_ARRAY(Path* out, Path** path_array, u64 path_array_size) {
+bool Path_Combine_ARRAY(Path* out, Path** path_array, uint64_t path_array_size) {
     if (!out || !path_array || path_array_size == 0) return false;
 
     // Create a temporary wstring to hold the result, ensuring we don't prematurely modify 'out'.
     Path temp = wstring_create();
 
     // Iterate through the array, stopping before the last element.
-    for (u64 i = 0; i < path_array_size - 1; ++i) {
+    for (uint64_t i = 0; i < path_array_size - 1; ++i) {
         if (path_array[i] == NULL) {
             // Clean up and return false on error.
             wstring_destroy(&temp);
@@ -121,13 +121,13 @@ Path* Path_Get(FILE* f) {
 
 
 //WARNING: OUT POINTER WILL BE REALLOCATED
-b8 Path_GetFullPath(Path* out, Path* path) {
+bool Path_GetFullPath(Path* out, Path* path) {
     return false;
 }  
 
 /// @returns true if ends with / or \\
 /// @returns false if not true lol
-b8 Path_EndsWithDirectorySeparator(Path* path) {
+bool Path_EndsWithDirectorySeparator(Path* path) {
     return false;
 }
 
@@ -135,21 +135,21 @@ b8 Path_EndsWithDirectorySeparator(Path* path) {
 /// @param path the PATH
 /// @returns true if exists
 /// @returns false if not
-b8 Path_Exists(Path* path) {
+bool Path_Exists(Path* path) {
     return false;
 }
 
 /// @returns false and NULL If not found or path is invalid
 /// @returns true and Allocated String pointer if found, this pointer has to be freed manually
-b8 Path_GetExstension(Path* path) {
+bool Path_GetExstension(Path* path) {
     return false;
 }
 
-b8 Path_GetFileName(wstring* out, Path* path) {
+bool Path_GetFileName(wstring* out, Path* path) {
     return false;
 }
 
-b8 Path_GetFileNameWithoutExstension(wstring* out, Path* path) {
+bool Path_GetFileNameWithoutExstension(wstring* out, Path* path) {
     return false;
 }
 
@@ -161,6 +161,6 @@ wstring* Path_GetInvalidPathChars() {
     return NULL;
 }
 
-wstring* Path_GetRandomFileName(b8 no_random_exstension, wstring* ext) {
+wstring* Path_GetRandomFileName(bool no_random_exstension, wstring* ext) {
     return NULL;
 }

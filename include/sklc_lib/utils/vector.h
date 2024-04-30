@@ -9,19 +9,19 @@ typedef struct _vector {
     void* data;                 // Vector's data
 
     // WARNING: DO NOT MANUALLY CHANGE ANYTHING BELOW!!!
-    u64 stride;  // Size of the element
-    u64 length;  // Number of elements currently used
-    u64 capacity;// How much items can it hold before reallocating;
-    u64 amount_of_elements_to_add_when_resizing;
+    uint64_t stride;  // Size of the element
+    uint64_t length;  // Number of elements currently used
+    uint64_t capacity;// How much items can it hold before reallocating;
+    uint64_t amount_of_elements_to_add_when_resizing;
 
     void (*push_back)(struct _vector* vec, const void* data);
     void* (*pop_back)(struct _vector* vec);
 
-    void (*set_at)(struct _vector* vec, u64 index, void* val);
-    void*(*get_at)(struct _vector* vec, u64 index);
+    void (*set_at)(struct _vector* vec, uint64_t index, void* val);
+    void*(*get_at)(struct _vector* vec, uint64_t index);
 
-    void (*insert_at)(struct _vector* vec, const void* data, u64 index);
-    void*(*remove_at)(struct _vector* vec, u64 index);
+    void (*insert_at)(struct _vector* vec, const void* data, uint64_t index);
+    void*(*remove_at)(struct _vector* vec, uint64_t index);
 
     void (*clear)(struct _vector* vec);
 
@@ -29,7 +29,7 @@ typedef struct _vector {
 
     // adds passed length to the current capacity
     
-    void (*reserve)(struct _vector* vec, u64 capacity);
+    void (*reserve)(struct _vector* vec, uint64_t capacity);
 
     bool is_struct_ptr;
     
@@ -37,10 +37,10 @@ typedef struct _vector {
 
 #define vector _vector
 
-vector _vector_create(u64 capacity, u64 stride);
+vector _vector_create(uint64_t capacity, uint64_t stride);
 
 // Use thes ONLY when you want to create an allocated vector or an array of vectors
-vector* _vector_create_ptr(u64 capacity, u64 stride);
+vector* _vector_create_ptr(uint64_t capacity, uint64_t stride);
 void vector_destroy(vector* vec);
 
 #define vector_create(type) _vector_create(1, sizeof(type))

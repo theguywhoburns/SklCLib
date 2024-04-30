@@ -3,14 +3,14 @@
 #include <string.h>
 #include <sklc_lib/utils/linked_list.h>
 
-void linked_list_add_last(struct linked_list* list, void* value, u64 size);
+void linked_list_add_last(struct linked_list* list, void* value, uint64_t size);
 void linked_list_add_last_node(struct linked_list* list, Node* node);
-void linked_list_add_first(struct linked_list* list, void* value, u64 size);
+void linked_list_add_first(struct linked_list* list, void* value, uint64_t size);
 void linked_list_add_first_node(struct linked_list* list, Node* node);
-u64  linked_list_count(struct linked_list* list);
+uint64_t  linked_list_count(struct linked_list* list);
 void linked_list_clear(struct linked_list* list);
-void*linked_list_get_at(struct linked_list* list, u64 id);
-Node*linked_list_get_node_at(struct linked_list* list, u64 id);
+void*linked_list_get_at(struct linked_list* list, uint64_t id);
+Node*linked_list_get_node_at(struct linked_list* list, uint64_t id);
 
 linked_list* linked_list_create() {
     linked_list* ret = malloc(sizeof(linked_list));
@@ -28,7 +28,7 @@ linked_list* linked_list_create() {
     return ret;
 }
 
-Node* linked_list_destroy(linked_list* list, b8 destroy_nodes) {
+Node* linked_list_destroy(linked_list* list, bool destroy_nodes) {
     /*
         printf("Function Name: %s\n", __func__);
         printf("List Address: %p\n", (void*)list);
@@ -57,7 +57,7 @@ Node* linked_list_destroy(linked_list* list, b8 destroy_nodes) {
 
 
 
-void linked_list_add_last(struct linked_list* list, void* value, u64 size) {
+void linked_list_add_last(struct linked_list* list, void* value, uint64_t size) {
     /*
         printf("Function Name: %s\n", __func__);
         printf("List Address: %p\n", (void*)list);
@@ -87,7 +87,7 @@ void linked_list_add_last_node(struct linked_list* list, Node* node) {
     list->count++;
 }
 
-void linked_list_add_first(struct linked_list* list, void* value, u64 size) {
+void linked_list_add_first(struct linked_list* list, void* value, uint64_t size) {
     /*
         printf("Function Name: %s\n", __func__);
         printf("List Address: %p\n", (void*)list);
@@ -113,7 +113,7 @@ void linked_list_add_first_node(struct linked_list* list, Node* node) {
     list->count++;
 }
 
-u64 linked_list_count(struct linked_list* list) {
+uint64_t linked_list_count(struct linked_list* list) {
     /*
         printf("Function Name: %s\n", __func__);
         printf("List Address: %p\n", (void*)list);
@@ -121,7 +121,7 @@ u64 linked_list_count(struct linked_list* list) {
 
     // Existing function code
     Node* node = list->First;
-    u64 count = 0;
+    uint64_t count = 0;
     
     while (node != NULL) {
         //printf("Node Address: %p, Next Address: 0x%lx\n", (void*)node, (unsigned long)node->next);
@@ -152,7 +152,7 @@ void linked_list_clear(struct linked_list* list) {
     list->count = 0;
 }
 
-void* linked_list_get_at(struct linked_list* list, u64 id) {
+void* linked_list_get_at(struct linked_list* list, uint64_t id) {
     /*
         printf("Function Name: %s\n", __func__);
         printf("List Address: %p\n", (void*)list);
@@ -166,7 +166,7 @@ void* linked_list_get_at(struct linked_list* list, u64 id) {
     return NULL;
 }
 
-Node* linked_list_get_node_at(struct linked_list* list, u64 id) {
+Node* linked_list_get_node_at(struct linked_list* list, uint64_t id) {
     /*
         printf("Function Name: %s\n", __func__);
         printf("List Address: %p\n", (void*)list);
@@ -178,7 +178,7 @@ Node* linked_list_get_node_at(struct linked_list* list, u64 id) {
     }
 
     Node* node = list->First;
-    u64 current_id = 0;
+    uint64_t current_id = 0;
 
     while (node != NULL) {
         if (current_id == id) {

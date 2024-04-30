@@ -10,16 +10,16 @@ typedef enum TINYVEC_FIELDS{
     TINYVEC_FIELD_LENGTH
 } TINYVEC_FIELDS;
 
-void* _tinyvec_create(u64 length, u64 stride);
+void* _tinyvec_create(uint64_t length, uint64_t stride);
 void _tinyvec_destroy(void* tinyvec);
-u64 _tinyvec_field_get(void* tinyvec, u64 field);
-void _tinyvec_field_set(void* tinyvec, u64 field, u64 value);
-void* _tinyvec_resize(void* tinyvec, u64 size);
-void* _tinyvec_reserve(void* tinyvec, u64 size);
+uint64_t _tinyvec_field_get(void* tinyvec, uint64_t field);
+void _tinyvec_field_set(void* tinyvec, uint64_t field, uint64_t value);
+void* _tinyvec_resize(void* tinyvec, uint64_t size);
+void* _tinyvec_reserve(void* tinyvec, uint64_t size);
 void* _tinyvec_push(void* tinyvec, const void* value_ptr);
 void _tinyvec_pop(void* tinyvec, void* dest);
-void* _tinyvec_pop_at(void* tinyvec, u64 index, void* dest);
-void* _tinyvec_insert_at(void* tinyvec, u64 index, void* value_ptr);
+void* _tinyvec_pop_at(void* tinyvec, uint64_t index, void* dest);
+void* _tinyvec_insert_at(void* tinyvec, uint64_t index, void* value_ptr);
 
 #define TINYVEC_DEFAULT_CAPACITY 1
 #define TINYVEC_RESIZE_FACTOR 2

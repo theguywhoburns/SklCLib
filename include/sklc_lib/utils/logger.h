@@ -28,7 +28,7 @@ typedef enum log_level {
  * 
  * @param memory_requirement A pointer to hold the required memory size of internal state. 
  * @param state 0 if just requesting memory erquirement, otherwise allocated block of memory.
- * @return b8 true on success; otherwise false.
+ * @return bool true on success; otherwise false.
 */
 
 void log_output(log_level level, const char* message, ...);

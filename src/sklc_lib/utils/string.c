@@ -52,20 +52,54 @@ void StringDuplicate(string* ret, string source) {
 
 /// @brief concatenates 2 strings together and writes the result to ret
 /// @param ret result
-/// @param str1 string, if it isn't the same variable as ret, then it doesnt need to own it's memory 
+/// @param str1 string must be initialized
 /// @param str2 same as str1
 void StringAdd(string* ret, string str1, string str2) {
     string _ret = {0};
     _ret.own = true;
     _ret.len = str1.len + str2.len;
-    _ret.data = malloc(_ret.len + 1);// '\0'
+    _ret.data = malloc(_ret.len + 1);// + '\0'
     memcpy(_ret.data, str1.data, str1.len);
     memcpy(_ret.data + str1.len, str2.data, str2.len);
     _ret.data[_ret.len] = '\0';
+    StringDestroy(ret);
+    *ret = _ret;
 }
 
 void StringSlice(string* ret, string str, uint64_t start, uint64_t end) {
-    return StringCreateEx(ret, str.data + start, end - start, true);
+    StringCreateEx(ret, str.data + start, end - start, true);
+}
+
+vector StringSplit(string str, string separator) {
+
+}
+
+vector StringSplitEx(string str, uint64_t amount_of_separators, string* separators) {
+    vector ret = _vector_create(sizeof(string), amount_of_separators + 1);
+    vector_resize(&ret, amount_of_separators + 1);
+    uint64_t count = 0;
+    uint64_t start = 0;
+    for (uint64_t i = 0; i < str.len; ++i) {
+        bool found = false;
+        for (uint64_t j = 0; j < amount_of_separators; ++j) {
+            if (str.data[i] == separators[j].data[0]) {
+                found = true;
+                StringSlice(&(((string*)ret.data)[count]), str, start, i);
+                count++;
+                start = i + separators[j].len;
+                i += separators[j].len - 1;
+                break;
+            }
+        }
+        if (!found) {
+            if (i == str.len - 1) {
+                StringSlice(&ret.data[count], str, start, i + 1);
+            }
+        }
+    }
+    ret.size = count;
+    ret.capacity = count;
+    return ret;
 }
 
 bool StringEquals(string str1, string str2) {

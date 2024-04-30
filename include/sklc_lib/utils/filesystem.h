@@ -10,7 +10,6 @@ typedef struct _folder {
     struct _folder *folders;
     /** Files tinyvec */
     struct _file *files;
-    Date modified;
 } Folder;
 
 bool folder_exists(const char *path);
@@ -29,10 +28,9 @@ typedef struct _file {
      * pass the struct without re-cating
      */
     void *handle;
-    u64 size;
+    uint64_t size;
     string name;
     string data;
-    Date modified;
 } File;
 
 bool file_exists(const char *path);

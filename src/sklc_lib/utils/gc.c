@@ -49,7 +49,7 @@ GarbageCollector gc; // global GC object
 #endif
 
 
-static bool is_prime(u64 n)
+static bool is_prime(uint64_t n)
 {
     /* https://stackoverflow.com/questions/1538644/c-determine-if-a-number-is-prime */
     if (n <= 3)
@@ -57,7 +57,7 @@ static bool is_prime(u64 n)
     else if (n % 2==0 || n % 3==0)
         return false;     // check if n is divisible by 2 or 3
     else {
-        for (u64 i=5; i*i<=n; i+=6) {
+        for (uint64_t i=5; i*i<=n; i+=6) {
             if (n % i == 0 || n%(i + 2) == 0)
                 return false;
         }
@@ -65,7 +65,7 @@ static bool is_prime(u64 n)
     }
 }
 
-static u64 next_prime(u64 n)
+static uint64_t next_prime(uint64_t n)
 {
     while (!is_prime(n)) ++n;
     return n;
@@ -79,7 +79,7 @@ static u64 next_prime(u64 n)
  */
 typedef struct Allocation {
     void* ptr;                // mem pointer
-    u64 size;              // allocated size in bytes
+    uint64_t size;              // allocated size in bytes
     char tag;                 // the tag for mark-and-sweep
     void (*dtor)(void*);      // destructor
     struct Allocation* next;  // separate chaining
@@ -96,7 +96,7 @@ typedef struct Allocation {
  *                 before freeing the memory pointed to by `ptr`.
  * @returns Pointer to the new allocation instance.
  */
-static Allocation* gc_allocation_new(void* ptr, u64 size, void (*dtor)(void*))
+static Allocation* gc_allocation_new(void* ptr, uint64_t size, void (*dtor)(void*))
 {
     Allocation* a = (Allocation*) malloc(sizeof(Allocation));
     a->ptr = ptr;
@@ -128,13 +128,13 @@ static void gc_allocation_delete(Allocation* a)
  * resolution is implemented using separate chaining.
  */
 typedef struct AllocationMap {
-    u64 capacity;
-    u64 min_capacity;
+    uint64_t capacity;
+    uint64_t min_capacity;
     double downsize_factor;
     double upsize_factor;
     double sweep_factor;
-    u64 sweep_limit;
-    u64 size;
+    uint64_t sweep_limit;
+    uint64_t size;
     Allocation** allocs;
 } AllocationMap;
 
@@ -152,8 +152,8 @@ static double gc_allocation_map_load_factor(AllocationMap* am)
     return (double) am->size / (double) am->capacity;
 }
 
-static AllocationMap* gc_allocation_map_new(u64 min_capacity,
-        u64 capacity,
+static AllocationMap* gc_allocation_map_new(uint64_t min_capacity,
+        uint64_t capacity,
         double sweep_factor,
         double downsize_factor,
         double upsize_factor)
@@ -178,7 +178,7 @@ static void gc_allocation_map_delete(AllocationMap* am)
     SKLDEBUG("Deleting allocation map (cap=%ld, siz=%ld)",
               am->capacity, am->size);
     Allocation *alloc, *tmp;
-    for (u64 i = 0; i < am->capacity; ++i) {
+    for (uint64_t i = 0; i < am->capacity; ++i) {
         alloc = am->allocs[i];
         if (alloc) {
             // Make sure to follow the chain inside a bucket
@@ -194,12 +194,12 @@ static void gc_allocation_map_delete(AllocationMap* am)
     free(am);
 }
 
-static u64 gc_hash(void *ptr)
+static uint64_t gc_hash(void *ptr)
 {
     return ((uintptr_t)ptr) >> 3;
 }
 
-static void gc_allocation_map_resize(AllocationMap* am, u64 new_capacity)
+static void gc_allocation_map_resize(AllocationMap* am, uint64_t new_capacity)
 {
     if (new_capacity <= am->min_capacity) {
         return;
@@ -210,11 +210,11 @@ static void gc_allocation_map_resize(AllocationMap* am, u64 new_capacity)
               am->capacity, am->size, new_capacity);
     Allocation** resized_allocs = calloc(new_capacity, sizeof(Allocation*));
 
-    for (u64 i = 0; i < am->capacity; ++i) {
+    for (uint64_t i = 0; i < am->capacity; ++i) {
         Allocation* alloc = am->allocs[i];
         while (alloc) {
             Allocation* next_alloc = alloc->next;
-            u64 new_index = gc_hash(alloc->ptr) % new_capacity;
+            uint64_t new_index = gc_hash(alloc->ptr) % new_capacity;
             alloc->next = resized_allocs[new_index];
             resized_allocs[new_index] = alloc;
             alloc = next_alloc;
@@ -223,10 +223,10 @@ static void gc_allocation_map_resize(AllocationMap* am, u64 new_capacity)
     free(am->allocs);
     am->capacity = new_capacity;
     am->allocs = resized_allocs;
-    am->sweep_limit = am->size + ((u64)am->sweep_factor * (am->capacity - am->size));
+    am->sweep_limit = am->size + ((uint64_t)am->sweep_factor * (am->capacity - am->size));
 }
 
-static bool gc_allocation_map_reu64o_fit(AllocationMap* am)
+static bool gc_allocation_map_reuint64_to_fit(AllocationMap* am)
 {
     double load_factor = gc_allocation_map_load_factor(am);
     if (load_factor > am->upsize_factor) {
@@ -246,7 +246,7 @@ static bool gc_allocation_map_reu64o_fit(AllocationMap* am)
 
 static Allocation* gc_allocation_map_get(AllocationMap* am, void* ptr)
 {
-    u64 index = gc_hash(ptr) % am->capacity;
+    uint64_t index = gc_hash(ptr) % am->capacity;
     Allocation* cur = am->allocs[index];
     while(cur) {
         if (cur->ptr == ptr) {
@@ -259,10 +259,10 @@ static Allocation* gc_allocation_map_get(AllocationMap* am, void* ptr)
 
 static Allocation* gc_allocation_map_put(AllocationMap* am,
         void* ptr,
-        u64 size,
+        uint64_t size,
         void (*dtor)(void*))
 {
-    u64 index = gc_hash(ptr) % am->capacity;
+    uint64_t index = gc_hash(ptr) % am->capacity;
     SKLDEBUG("PUT request for allocation ix=%ld", index);
     Allocation* alloc = gc_allocation_new(ptr, size, dtor);
     Allocation* cur = am->allocs[index];
@@ -294,7 +294,7 @@ static Allocation* gc_allocation_map_put(AllocationMap* am,
     am->size++;
     SKLDEBUG("AllocationMap insert at ix=%ld", index);
     void* p = alloc->ptr;
-    if (gc_allocation_map_reu64o_fit(am)) {
+    if (gc_allocation_map_reuint64_to_fit(am)) {
         alloc = gc_allocation_map_get(am, p);
     }
     return alloc;
@@ -306,7 +306,7 @@ static void gc_allocation_map_remove(AllocationMap* am,
                                      bool allow_resize)
 {
     // ignores unknown keys
-    u64 index = gc_hash(ptr) % am->capacity;
+    uint64_t index = gc_hash(ptr) % am->capacity;
     Allocation* cur = am->allocs[index];
     Allocation* prev = NULL;
     Allocation* next;
@@ -330,12 +330,12 @@ static void gc_allocation_map_remove(AllocationMap* am,
         cur = next;
     }
     if (allow_resize) {
-        gc_allocation_map_reu64o_fit(am);
+        gc_allocation_map_reuint64_to_fit(am);
     }
 }
 
 
-static void* gc_mcalloc(u64 count, u64 size)
+static void* gc_mcalloc(uint64_t count, uint64_t size)
 {
     if (!count) return malloc(size);
     return calloc(count, size);
@@ -346,18 +346,18 @@ static bool gc_needs_sweep(GarbageCollector* _gc)
     return _gc->allocs->size > _gc->allocs->sweep_limit;
 }
 
-static void* gc_allocate(GarbageCollector* _gc, u64 count, u64 size, void(*dtor)(void*))
+static void* gc_allocate(GarbageCollector* _gc, uint64_t count, uint64_t size, void(*dtor)(void*))
 {
     /* Allocation logic that generalizes over malloc/calloc. */
 
     /* Check if we reached the high-water mark and need to clean up */
     if (gc_needs_sweep(_gc) && !_gc->paused) {
-        u64 freed_mem = gc_run(_gc);
+        uint64_t freed_mem = gc_run(_gc);
         SKLDEBUG("Garbage collection cleaned up %lu bytes.", freed_mem);
     }
     /* With cleanup out of the way, attempt to allocate memory */
     void* ptr = gc_mcalloc(count, size);
-    u64 alloc_size = count ? count * size : size;
+    uint64_t alloc_size = count ? count * size : size;
     /* If allocation fails, force an out-of-policy run to free some memory and try again. */
     if (!ptr && !_gc->paused && (errno == EAGAIN || errno == ENOMEM)) {
         gc_run(_gc);
@@ -388,12 +388,12 @@ static void gc_make_root(GarbageCollector* _gc, void* ptr)
     }
 }
 
-void* gc_malloc(GarbageCollector*_gc, u64 size)
+void* gc_malloc(GarbageCollector*_gc, uint64_t size)
 {
     return gc_malloc_ext(_gc, size, NULL);
 }
 
-void* gc_malloc_static(GarbageCollector* _gc, u64 size, void(*dtor)(void*))
+void* gc_malloc_static(GarbageCollector* _gc, uint64_t size, void(*dtor)(void*))
 {
     void* ptr = gc_malloc_ext(_gc, size, dtor);
     gc_make_root(_gc, ptr);
@@ -406,26 +406,26 @@ void* gc_make_static(GarbageCollector* _gc, void* ptr)
     return ptr;
 }
 
-void* gc_malloc_ext(GarbageCollector* _gc, u64 size, void(*dtor)(void*))
+void* gc_malloc_ext(GarbageCollector* _gc, uint64_t size, void(*dtor)(void*))
 {
     return gc_allocate(_gc, 0, size, dtor);
 }
 
 
-void* gc_calloc(GarbageCollector* _gc, u64 count, u64 size)
+void* gc_calloc(GarbageCollector* _gc, uint64_t count, uint64_t size)
 {
     return gc_calloc_ext(_gc, count, size, NULL);
 }
 
 
-void* gc_calloc_ext(GarbageCollector* _gc, u64 count, u64 size,
+void* gc_calloc_ext(GarbageCollector* _gc, uint64_t count, uint64_t size,
                     void(*dtor)(void*))
 {
     return gc_allocate(_gc, count, size, dtor);
 }
 
 
-void* gc_realloc(GarbageCollector* _gc, void* p, u64 size)
+void* gc_realloc(GarbageCollector* _gc, void* p, uint64_t size)
 {
     Allocation* alloc = gc_allocation_map_get(_gc->allocs, p);
     if (p && !alloc) {
@@ -476,8 +476,8 @@ void gc_start(GarbageCollector* _gc, void* bos)
 
 void gc_start_ext(GarbageCollector* _gc,
                   void* bos,
-                  u64 initial_capacity,
-                  u64 min_capacity,
+                  uint64_t initial_capacity,
+                  uint64_t min_capacity,
                   double downsize_load_factor,
                   double upsize_load_factor,
                   double sweep_factor)
@@ -538,7 +538,7 @@ void gc_mark_stack(GarbageCollector* _gc)
 void gc_mark_roots(GarbageCollector* _gc)
 {
     SKLDEBUG("Marking roots%s", "");
-    for (u64 i = 0; i < _gc->allocs->capacity; ++i) {
+    for (uint64_t i = 0; i < _gc->allocs->capacity; ++i) {
         Allocation* chunk = _gc->allocs->allocs[i];
         while (chunk) {
             if (chunk->tag & GC_TAG_ROOT) {
@@ -564,11 +564,11 @@ void gc_mark(GarbageCollector* _gc)
     _mark_stack(_gc);
 }
 
-u64 gc_sweep(GarbageCollector* _gc)
+uint64_t gc_sweep(GarbageCollector* _gc)
 {
     SKLDEBUG("Initiating GC sweep (gc@%p)", (void*) _gc);
-    u64 total = 0;
-    for (u64 i = 0; i < _gc->allocs->capacity; ++i) {
+    uint64_t total = 0;
+    for (uint64_t i = 0; i < _gc->allocs->capacity; ++i) {
         Allocation* chunk = _gc->allocs->allocs[i];
         Allocation* next = NULL;
         /* Iterate over separate chaining */
@@ -593,7 +593,7 @@ u64 gc_sweep(GarbageCollector* _gc)
             }
         }
     }
-    gc_allocation_map_reu64o_fit(_gc->allocs);
+    gc_allocation_map_reuint64_to_fit(_gc->allocs);
     return total;
 }
 
@@ -605,7 +605,7 @@ u64 gc_sweep(GarbageCollector* _gc)
 void gc_unroot_roots(GarbageCollector* _gc)
 {
     SKLDEBUG("Unmarking roots%s", "");
-    for (u64 i = 0; i < _gc->allocs->capacity; ++i) {
+    for (uint64_t i = 0; i < _gc->allocs->capacity; ++i) {
         Allocation* chunk = _gc->allocs->allocs[i];
         while (chunk) {
             if (chunk->tag & GC_TAG_ROOT) {
@@ -616,15 +616,15 @@ void gc_unroot_roots(GarbageCollector* _gc)
     }
 }
 
-u64 gc_stop(GarbageCollector* _gc)
+uint64_t gc_stop(GarbageCollector* _gc)
 {
     gc_unroot_roots(_gc);
-    u64 collected = gc_sweep(_gc);
+    uint64_t collected = gc_sweep(_gc);
     gc_allocation_map_delete(_gc->allocs);
     return collected;
 }
 
-u64 gc_run(GarbageCollector* _gc)
+uint64_t gc_run(GarbageCollector* _gc)
 {
     SKLDEBUG("Initiating GC run (gc@%p)", (void*) _gc);
     gc_mark(_gc);
@@ -633,7 +633,7 @@ u64 gc_run(GarbageCollector* _gc)
 
 char* gc_strdup (GarbageCollector* _gc, const char* s)
 {
-    u64 len = strlen(s) + 1;
+    uint64_t len = strlen(s) + 1;
     void *new = gc_malloc(_gc, len);
 
     if (new == NULL) {

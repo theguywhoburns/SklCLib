@@ -1,34 +1,34 @@
 #include <sklc_lib/utils/logger.h>
 
-static void console_write(const char* message, u8 colour);
-static void console_write_error(const char* message, u8 colour);
+static void console_write(const char* message, uint8_t colour);
+static void console_write_error(const char* message, uint8_t colour);
 
 // Windows platform layer.
 #ifdef SKLC_PLATFORM_WINDOWS
 #include <Windows.h>
-static void console_write(const char* message, u8 colour) {
+static void console_write(const char* message, uint8_t colour) {
     HANDLE console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
     // FATAL,ERROR,WARN,INFO,DEBUG,TRACE
-    static u8 levels[6] = {64, 4, 6, 2, 1, 8};
+    static uint8_t levels[6] = {64, 4, 6, 2, 1, 8};
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     SetConsoleTextAttribute(console_handle, levels[colour]);
     OutputDebugStringA(message);
-    u64 length = strlen(message);
+    uint64_t length = strlen(message);
     LPDWORD number_written = 0;
     WriteConsoleA(GetStdHandle(STD_OUTPUT_HANDLE), message, (DWORD)length, number_written, 0);
     SetConsoleTextAttribute(console_handle, csbi.wAttributes);
 }
 
-static void console_write_error(const char* message, u8 colour) {
+static void console_write_error(const char* message, uint8_t colour) {
     HANDLE console_handle = GetStdHandle(STD_ERROR_HANDLE);
     // FATAL,ERROR,WARN,INFO,DEBUG,TRACE
-    static u8 levels[6] = {64, 4, 6, 2, 1, 8};
+    static uint8_t levels[6] = {64, 4, 6, 2, 1, 8};
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     SetConsoleTextAttribute(console_handle, levels[colour]);
     OutputDebugStringA(message);
-    u64 length = strlen(message);
+    uint64_t length = strlen(message);
     LPDWORD number_written = 0;
     WriteConsoleA(GetStdHandle(STD_ERROR_HANDLE), message, (DWORD)length, number_written, 0);
     SetConsoleTextAttribute(console_handle, csbi.wAttributes);
@@ -37,13 +37,13 @@ static void console_write_error(const char* message, u8 colour) {
 
 #ifdef SKLC_PLATFORM_LINUX
 #include <xcb/xcb.h>
-static void console_write(const char* message, u8 colour) {
+static void console_write(const char* message, uint8_t colour) {
     // FATAL,ERROR,WARN,INFO,DEBUG,TRACE
     const char* colour_strings[] = {"0;41", "1;31", "1;33", "1;32", "1;34", "1;30"};
     printf("\033[%sm%s\033[0m", colour_strings[colour], message);
 }
 
-static void console_write_error(const char* message, u8 colour) {
+static void console_write_error(const char* message, uint8_t colour) {
     // FATAL,ERROR,WARN,INFO,DEBUG,TRACE
     const char* colour_strings[] = {"0;41", "1;31", "1;33", "1;32", "1;34", "1;30"};
     printf("\033[%sm%s\033[0m", colour_strings[colour], message);
@@ -51,17 +51,17 @@ static void console_write_error(const char* message, u8 colour) {
 #endif
 
 #ifdef SKLC_PLATFORM_APPLE
-static void console_write_file(FILE* file, const char* message, u8 colour) {
+static void console_write_file(FILE* file, const char* message, uint8_t colour) {
     // Colours: FATAL, ERROR, WARN, INFO, DEBUG, TRACE.
     const char* colour_strings[] = {"0;41", "1;31", "1;33", "1;32", "1;34", "1;30"};
     fprintf(file, "\033[%sm%s\033[0m", colour_strings[colour], message);
 }
 
-static void console_write(const char* message, u8 colour) {
+static void console_write(const char* message, uint8_t colour) {
     console_write_file(stdout, message, colour);
 }
 
-static void console_write_error(const char* message, u8 colour) {
+static void console_write_error(const char* message, uint8_t colour) {
     console_write_file(stderr, message, colour);
 }
 #endif
@@ -76,7 +76,7 @@ static void console_write_error(const char* message, u8 colour) {
 
 void log_output(log_level level, const char* message, ...) {
     const char* level_strings[6] = {"[FATAL]: ", "[ERROR]: ", "[WARN]:  ", "[INFO]:  ", "[DEBUG]: ", "[TRACE]: "};
-    b8 is_error = level < LOG_LEVEL_WARN;
+    bool is_error = level < LOG_LEVEL_WARN;
 
     // Technically imposes a 32k character limit on a single log entry, but...
     // DON'T DO THAT!

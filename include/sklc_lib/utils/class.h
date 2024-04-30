@@ -1,6 +1,0 @@
-#ifndef _SKLC_LIB_CLASS_SYSTEM_H_
-#define _SKLC_LIB_CLASS_SYSTEM_H_
-
-
-
-#endif//_SKLC_LIB_CLASS_SYSTEM_H_

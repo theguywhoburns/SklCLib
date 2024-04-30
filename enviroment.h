@@ -74,10 +74,10 @@ typedef struct _Enviroment {
     string* CurrentDirectory;
     int CurrentManagedTreadID;
     int exit_code;
-    b8 HasShutdownStarted;
-    b8 Is64BitOS;
-    b8 Is64BitProcess;
-    b8 IsPrivilegedProcess;
+    bool HasShutdownStarted;
+    bool Is64BitOS;
+    bool Is64BitProcess;
+    bool IsPrivilegedProcess;
     const char* MachineName;
     const char* NewLine;
     const char* OsVersion;
@@ -86,14 +86,14 @@ typedef struct _Enviroment {
     int ProcessPath;
     string* StackTrace;
     const char* SystemDirectory;
-    u64* SystemPageSize;
+    uint64_t* SystemPageSize;
     int* TickCount;
     long long* TickCount64;
     string* UserDomainName;
-    b8 UserInteractive;
+    bool UserInteractive;
     string* UserName;
     string* Version;
-    u64* WorkingSet;
+    uint64_t* WorkingSet;
 
     // Functions
     void (*Exit)(int ExitCode);
@@ -123,7 +123,7 @@ typedef struct _Enviroment {
 } _Enviroment;
 
 extern _Enviroment Enviroment;
-b8 Enviroment_Init(_Enviroment* env, int* argc, char*** argv);
+bool Enviroment_Init(_Enviroment* env, int* argc, char*** argv);
 void Enviroment_Shutdown(_Enviroment* env);
 
 #endif//_SKLC_DATALANG_ENVIROMENT_H_

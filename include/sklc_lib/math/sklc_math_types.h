@@ -6,17 +6,17 @@
 #pragma region vectors
 
 typedef union _vec2u {
-    f32 data[2];
+    float data[2];
     union 
     {
         struct {
             union {
             // The first element.
-            f32 x, r, s, u;
+            float x, r, s, u;
         };
         union {
             // The second element.
-            f32 y, g, t, v;
+            float y, g, t, v;
         };
         };
     };
@@ -24,21 +24,21 @@ typedef union _vec2u {
 } vec2;
 
 typedef union _vec3u {
-    f32 data[3];
+    float data[3];
     union 
     {
         struct {
             union {
                 // The first element.
-                f32 x, r, s, u;
+                float x, r, s, u;
             };
             union {
                 // The second element.
-                f32 y, g, t, v;
+                float y, g, t, v;
             };
             union {
                 // The third element.
-                f32 z, b, p, w;
+                float z, b, p, w;
             };
         };
     };
@@ -46,25 +46,25 @@ typedef union _vec3u {
 } vec3;
 
 typedef union _vec4u {
-    f32 data[4];
+    float data[4];
     union 
     {
         struct {
             union {
                 // The first element.
-                f32 x, r, s;
+                float x, r, s;
             };
             union {
                 // The second element.
-                f32 y, g, t;
+                float y, g, t;
             };
             union {
                 // The third element.
-                f32 z, b, p;
+                float z, b, p;
             };
             union {
                 // The fourth element.
-                f32 w, a, q;
+                float w, a, q;
             };
         };
     };
@@ -72,17 +72,17 @@ typedef union _vec4u {
 } vec4;
 
 typedef union _vec2du {
-    f64 data[2];
+    double data[2];
     union 
     {
         struct {
             union {
             // The first element.
-            f64 x, r, s, u;
+            double x, r, s, u;
         };
         union {
             // The second element.
-            f64 y, g, t, v;
+            double y, g, t, v;
         };
         };
     };
@@ -90,21 +90,21 @@ typedef union _vec2du {
 } vec2d;
 
 typedef union _vec3du {
-    f64 data[3];
+    double data[3];
     union 
     {
         struct {
             union {
                 // The first element.
-                f64 x, r, s, u;
+                double x, r, s, u;
             };
             union {
                 // The second element.
-                f64 y, g, t, v;
+                double y, g, t, v;
             };
             union {
                 // The third element.
-                f64 z, b, p, w;
+                double z, b, p, w;
             };
         };
     };
@@ -112,25 +112,25 @@ typedef union _vec3du {
 } vec3d;
 
 typedef union _vec4du {
-    f64 data[4];
+    double data[4];
     union 
     {
         struct {
             union {
                 // The first element.
-                f64 x, r, s;
+                double x, r, s;
             };
             union {
                 // The second element.
-                f64 y, g, t;
+                double y, g, t;
             };
             union {
                 // The third element.
-                f64 z, b, p;
+                double z, b, p;
             };
             union {
                 // The fourth element.
-                f64 w, a, q;
+                double w, a, q;
             };
         };
     };
@@ -206,27 +206,27 @@ typedef union _vec4iu {
 #pragma endregion vectors
 #pragma region matricies
 typedef union _mat2u {
-    f32 data[4];
+    float data[4];
 }mat2;
 
 typedef union _mat3u {
-    f32 data[9];
+    float data[9];
 }mat3;
 
 typedef union _mat4u {
-    f32 data[16];
+    float data[16];
 }mat4;
 
 typedef union _mat2du {
-    f64 data[4];
+    double data[4];
 }mat2d;
 
 typedef union _mat3du {
-    f64 data[9];
+    double data[9];
 }mat3d;
 
 typedef union _mat4du {
-    f64 data[16];
+    double data[16];
 }mat4d;
 #pragma endregion matricies
 #pragma region rects
@@ -252,22 +252,22 @@ typedef union _rectlu {
 } rectl;
 
 typedef union _rectfu {
-    f32 data;
+    float data;
     struct {
-        f32 width;        
-        f32 height;        
-        f32 left;        
-        f32 top;        
+        float width;        
+        float height;        
+        float left;        
+        float top;        
     };
 } rectf;
 
 typedef union _rectdu {
-    f64 data;
+    double data;
     struct {
-        f64 width;        
-        f64 height;        
-        f64 left;        
-        f64 top;        
+        double width;        
+        double height;        
+        double left;        
+        double top;        
     };
 } rectd;
 

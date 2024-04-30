@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <sklc_lib/utils/node.h>
 
-Node* Node_Create (void* data, u64 size, Node* next) {
+Node* Node_Create (void* data, uint64_t size, Node* next) {
     Node* ret = malloc(sizeof(Node));
     assert(ret != NULL);
     ret->size = size;
@@ -15,7 +15,7 @@ Node* Node_Create (void* data, u64 size, Node* next) {
     return ret;
 }
 
-Node* Node_Prepend(Node* head, void* data, u64 size) {
+Node* Node_Prepend(Node* head, void* data, uint64_t size) {
     Node* node = Node_Create(data, size, head);
     head = node;
     return head;

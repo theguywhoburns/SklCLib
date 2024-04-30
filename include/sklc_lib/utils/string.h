@@ -30,10 +30,9 @@ void StringDuplicate(string* ret, string source);
 /// @param str2 same as str1
 void StringAdd(string* ret, string str1, string str2);
 void StringSlice(string* ret, string str, uint64_t start, uint64_t end);
-/*TODO: todo  
-    vector StringSplit(string str, string separator);
-    vector StringSplitEx(string str, uint64_t amount_of_separators, string* separators);
-*/
+vector StringSplit(string str, string separator);
+vector StringSplitEx(string str, uint64_t amount_of_separators, string* separators);
+
 bool StringEquals(string str1, string str2);
 int StringFind(string str, string to_find, int id);
 

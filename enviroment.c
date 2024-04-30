@@ -12,7 +12,7 @@ char *arg2cmd(int argc, char** argv) {
         buf=( char *)realloc(buf,n+k+4);
         char *p=buf+n;
         char endq=0;
-        // this is a poor mans quoting, which is good enough for anything that's not rediculous
+        // this is a poor mans quoting, which is good enough for anything that's not ridiculous
         if (strchr(argv[i], ' ')) {
             if (!strchr(argv[i], '\'')) {
                 *p++='\'';
@@ -32,17 +32,17 @@ char *arg2cmd(int argc, char** argv) {
     return buf;
 }
 
-b8 Enviroment_Init(_Enviroment* env, int* argc, char*** argv) {
+bool Enviroment_Init(_Enviroment* env, int* argc, char*** argv) {
     if(env == NULL) return false;
 
     string* cmd = malloc(sizeof(string));
-    cmd->str_data = arg2cmd(*argc, *argv);
-    cmd->length = string_strlen(cmd->str_data);
+    cmd->data = arg2cmd(*argc, *argv);
+    cmd->len = StringLength(cmd->str_data);
     env->CommandLine = cmd;
 
     string* cur_dir = malloc(sizeof(string));
-    *cur_dir = string_create_ccp(*argv[0]);
-    env->CurrentDirectory = 
+    *cur_dir = StringCreateEx(*argv[0], StringLength(*argv[0]), false);
+    env->CurrentDirectory = cur_dir; 
 
     return true;
 }
