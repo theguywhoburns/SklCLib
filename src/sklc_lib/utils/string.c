@@ -76,7 +76,7 @@ vector StringSplit(string str, string separator) {
 
 vector StringSplitEx(string str, uint64_t amount_of_separators, string* separators) {
     vector ret = _vector_create(sizeof(string), amount_of_separators + 1);
-    vector_resize(&ret, amount_of_separators + 1);
+    ret.resize(&ret, amount_of_separators + 1);
     uint64_t count = 0;
     uint64_t start = 0;
     for (uint64_t i = 0; i < str.len; ++i) {
@@ -93,12 +93,10 @@ vector StringSplitEx(string str, uint64_t amount_of_separators, string* separato
         }
         if (!found) {
             if (i == str.len - 1) {
-                StringSlice(&ret.data[count], str, start, i + 1);
+                StringSlice(&((string*)ret.data)[count], str, start, i + 1);
             }
         }
     }
-    ret.size = count;
-    ret.capacity = count;
     return ret;
 }
 
