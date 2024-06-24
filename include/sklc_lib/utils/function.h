@@ -3,8 +3,9 @@
 
 #include <sklc_lib/defines.h>
 
-#define FUNCTION_CAST(void_pointer, return_type, ...) ((return_type(*)(__VA_ARGS__))void_pointer)
-
+#define FUNCTION_CAST(func, return_type, ...) ((return_type(*)(__VA_ARGS__))func)
+#define FUNCTION_TYPE(return_type, ...) return_type(*)(__VA_ARGS__)
+#define CREATE_FUNCTION_TYPE(name, return_type, ...) typedef return_type (*name)(__VA_ARGS__)
 
 /// Must be done like that cus ma fucking vectors treat the function as an address to some variable(will fix that later(maybe(no i will not)))
 /// @brief function structure, use this in FUNCTION_CAST and in vectors

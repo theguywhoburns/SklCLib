@@ -66,37 +66,66 @@ void StringAdd(string* ret, string str1, string str2) {
     *ret = _ret;
 }
 
+void StringJoin(string* ret, vector strings) {
+    string _ret = {0};
+    uint64_t _ret_len = 0;
+    for(int i = 0; i < strings.length; i++) {
+        string* str = strings.get_at(&strings, i);
+        _ret_len += str->len;
+    }
+
+    _ret.data = malloc(_ret_len + 1);
+    _ret.data[_ret_len] = '\0';
+    char* data = _ret.data;
+    for(int i = 0; i < strings.length; i++) {
+        string* str = strings.get_at(&strings, i);
+        memcpy(data, str->data, str->len);
+        data+=str->len;
+    }
+    
+    StringDestroy(ret);
+    *ret = _ret;
+}
+
 void StringSlice(string* ret, string str, uint64_t start, uint64_t end) {
     StringCreateEx(ret, str.data + start, end - start, true);
 }
 
 vector StringSplit(string str, string separator) {
+    vector ret = _vector_create(1, sizeof(string),
+        __vector_def_val_dtor,
+        __vector_def_val_cpy,
+        __vector_def_cmp
+    );
 
-}
+    if (str.data == NULL || separator.data == NULL || separator.len == 0)
+        return ret;
 
-vector StringSplitEx(string str, uint64_t amount_of_separators, string* separators) {
-    vector ret = _vector_create(sizeof(string), amount_of_separators + 1);
-    ret.resize(&ret, amount_of_separators + 1);
-    uint64_t count = 0;
-    uint64_t start = 0;
+    uint64_t last_start = 0;
     for (uint64_t i = 0; i < str.len; ++i) {
-        bool found = false;
-        for (uint64_t j = 0; j < amount_of_separators; ++j) {
-            if (str.data[i] == separators[j].data[0]) {
-                found = true;
-                StringSlice(&(((string*)ret.data)[count]), str, start, i);
-                count++;
-                start = i + separators[j].len;
-                i += separators[j].len - 1;
+        bool is_separator = false;
+        for (uint64_t j = 0; j < separator.len; ++j) {
+            if (str.data[i] == separator.data[j]) {
+                is_separator = true;
                 break;
             }
         }
-        if (!found) {
-            if (i == str.len - 1) {
-                StringSlice(&((string*)ret.data)[count], str, start, i + 1);
-            }
+
+        if (is_separator) {
+            string segment = {0};
+            StringCreateEx(&segment, str.data + last_start, i - last_start, true);
+            ret.push_back(&ret, &segment);
+
+            last_start = i + separator.len;
+            i += separator.len - 1;
         }
     }
+    if (last_start < str.len) {
+        string segment = {0};
+        StringCreateEx(&segment, str.data + last_start, str.len - last_start, true);
+        ret.push_back(&ret, &segment);
+    }
+
     return ret;
 }
 
@@ -108,8 +137,8 @@ bool StringEquals(string str1, string str2) {
     return true;
 }
 
-int StringFind(string str, string to_find, int id) {
-    if (to_find.len == 0 || str.len < to_find.len || id <= 0) {
+int StringFind(string str, string to_find, int index) {
+    if (to_find.len == 0 || str.len < to_find.len || index <= 0) {
         return -1;
     }
 
@@ -124,12 +153,71 @@ int StringFind(string str, string to_find, int id) {
         }
         if (found) {
             occurrence++;
-            if (occurrence == id) {
-                return (int)i; // Found the id-th occurrence
+            if (occurrence == index) {
+                return (int)i; // Found the index-th occurrence
             }
             // Skip ahead to the end of the current occurrence to avoid overlapping matches
             i += to_find.len - 1;
         }
     }
-    return -1; // to_find not found or id-th occurrence not found
+    printf("-> to_find not found or index-th occurrence not found, returning -1\n");
+    return -1; // to_find not found or index-th occurrence not found
+}
+
+int  StringCompare(string str1, string str2) {
+    if(str1.len != str2.len) return str1.len - str2.len;
+    for(uint64_t i = 0; i < str1.len; ++i) {
+        if(str1.data[i] != str2.data[i]) return str1.data[i] - str2.data[i];
+    }
+    return 0;
+}
+
+void StringToUpper(string* ret, string str) {
+    string _ret = {0};
+    StringDuplicate(&_ret, str);
+    char* data = _ret.data;
+    for(int i = 0; i < _ret.len; i++) {
+        if(data[i] < 'a' || data[i] > 'z') {
+            continue;
+        }
+        data[i] -= 32;
+    }
+    StringDestroy(ret);
+    *ret = _ret;
+}
+
+void StringToLower(string* ret, string str) {
+    string _ret = {0};
+    StringDuplicate(&_ret, str);
+    char* data = _ret.data;
+    for(int i = 0; i < _ret.len; i++) {
+        if(data[i] < 'A' || data[i] > 'Z') {
+            continue;
+        }
+        data[i] += 32;
+    }
+    StringDestroy(ret);
+    *ret = _ret;
+}
+
+void StringReverse(string* ret, string str) {
+    string _ret = {0};  
+    ret->data = malloc(str.len + 1);
+    ret->data[str.len] = '\0';
+    int j = 0;
+    for(int i = str.len; i > 0; i--) {
+        ret->data[j] = str.data[i];
+        j++;
+    }
+    StringDestroy(ret);
+    *ret = _ret;
+}
+
+bool StringEndsWith(string str, string with) {
+    if(str.len < with.len) return false;
+    int index_to_search_from = str.len - with.len;
+    string to_search = STRING_VIEW(str.data + index_to_search_from, with.len);
+    int found = StringFind(to_search, with, 1);
+    if(found >= 0) return true;
+    return false;
 }

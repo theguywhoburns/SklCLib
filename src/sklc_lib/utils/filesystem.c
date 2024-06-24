@@ -20,18 +20,7 @@ bool file_exists_str(string path) {
 
 File* file_open(const char *path) {
   File *file = (File*)malloc(sizeof(File));
-  if(file_exists(path)) {
-    file->handle = CreateFileA(path, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-  } else {
-    file->handle = CreateFileA(path, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
-  }
-  StringCreate(&file->name, path);
-  file->size = GetFileSize(file->handle, NULL);
-  file->data.data = (char*)malloc(file->size + 1);
-	file->data.len = file->size;
-  DWORD read;
-  ReadFile(file->handle, file->data.data, file->size, &read, NULL);
-  file->data.data[file->size] = 0;
+  
   return file;
 }
 
@@ -45,8 +34,6 @@ File* file_open_ex(const char *path) {
 
 void file_close(File *file) {
   CloseHandle(file->handle);
-  StringDestroy(&file->data);
-	StringDestroy(&file->name);
   free(file);
 }
 

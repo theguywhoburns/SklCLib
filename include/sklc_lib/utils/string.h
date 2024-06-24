@@ -29,11 +29,27 @@ void StringDuplicate(string* ret, string source);
 /// @param str1 string, if it isn't the same variable as ret, then it doesnt need to own it's memory 
 /// @param str2 same as str1
 void StringAdd(string* ret, string str1, string str2);
+void StringJoin(string* ret, vector strings);
 void StringSlice(string* ret, string str, uint64_t start, uint64_t end);
 vector StringSplit(string str, string separator);
-vector StringSplitEx(string str, uint64_t amount_of_separators, string* separators);
 
 bool StringEquals(string str1, string str2);
-int StringFind(string str, string to_find, int id);
+int  StringCompare(string str1, string str2);
+int  StringFind(string str, string to_find, int index);
+
+void StringToUpper(string* ret, string str); 
+void StringToLower(string* ret, string str); 
+
+bool StringEndsWith(string str, string with);
+void StringReverse(string* ret, string str);
+
+void    IntToString(string* ret, int64_t val);
+int64_t StringToInt(string str);
+void    FloatToString(string* ret, float val);
+double  StringToFloat(string str);
+
+INLINE bool StringIsEmpty(string str) {
+    return str.len == 0;
+}
 
 #endif//_SKLC_LIB_STRING_H_

@@ -33,7 +33,18 @@ void resize(struct _vector* vec);
 // adds passed length too the current capacity
 void reserve(struct _vector* vec, unsigned long long capacity);
 
-vector _vector_create(unsigned long long capacity, unsigned long long stride) {
+struct _vector vector_copy(struct _vector* vec) {
+    struct _vector v = _vector_create(vec->capacity, vec->stride, vec->value_destructor, vec->value_copy, vec->_compare);
+    for (size_t i = 0; i < vec->length; i++) {
+        v.push_back(&v, vec->get_at(vec, i));
+    }
+    return v;
+}
+
+vector _vector_create(uint64_t capacity, uint64_t stride, 
+    void (*val_dtor)(vector* vec, void* val), 
+    void*(*val_cpy)(vector* vec, void* val),
+    int  (*cmp)(vector* vec, void* a, void* b)){
     vector v;
     v.capacity = capacity;
     v.length = 0;
@@ -49,13 +60,22 @@ vector _vector_create(unsigned long long capacity, unsigned long long stride) {
     v.get_at = get_at;
     v.remove_at = remove_at;
     v.amount_of_elements_to_add_when_resizing = 2;
+    v.value_destructor = val_dtor;
+    v.value_copy = val_cpy;
+    v._compare = cmp;
+    v.copy = vector_copy;
     return v;
 }
 
-vector* _vector_create_ptr(unsigned long long capacity, unsigned long long stride) {
+vector* _vector_create_ptr(uint64_t capacity, uint64_t stride,
+    void (*val_dtor)(vector* vec, void* val), 
+    void*(*val_cpy)(vector* vec, void* val),
+    int  (*cmp)(vector* vec, void* a, void* b)) {
     vector* v = malloc(sizeof(vector));
     assert(v != NULL);
-    *v = _vector_create(capacity, stride);
+    *v = _vector_create(capacity, stride, 
+        val_dtor, val_cpy, cmp
+    );
     v->is_struct_ptr = true;
     return v;
 }
@@ -111,6 +131,9 @@ void* remove_at(struct _vector* vec, unsigned long long index) {
 }
 
 void clear(struct _vector* vec) {
+    for (unsigned long long i = 0; i < vec->length; i++) {
+        vec->value_destructor(vec, (char*)vec->data + i * vec->stride);
+    }
     memset(vec->data, 0, vec->capacity * vec->stride);
 }
 
@@ -128,4 +151,41 @@ void reserve(struct _vector* vec, unsigned long long capacity) {
     free(vec->data);
     vec->data = temp_data;
     vec->capacity += capacity;
+}
+
+void __vector_def_val_dtor(vector* vec, void* val_ptr) {
+    //TODO: Do nothing
+    (void*)vec;
+    (void**)val_ptr;
+}
+
+void* __vector_def_val_cpy(vector* vec, void* val_ptr) {
+    void* new_val = malloc(vec->stride);
+    assert(new_val != NULL);
+    memcpy(new_val, val_ptr, vec->stride);
+    return new_val;
+}
+
+int __vector_def_cmp(vector* vec, void* a, void* b) {
+    return memcmp(a, b, vec->stride);
+}
+
+#include <sklc_lib/utils/string.h>
+
+void __vector_def_string_dtor(vector* vec, void* val) {
+    (void*)vec;
+    StringDestroy((string*)val);
+}
+
+void*__vector_def_string_cpy(vector* vec, void* val) {
+    (void*)vec;
+    string* ret = malloc(sizeof(string));
+    StringDuplicate(ret, *(string*)val);
+    return ret;
+}
+
+int __vector_def_string_cmp(vector* vec, void* a, void* b) {
+    (void*)vec;
+    if(StringCompare(*(string*)a, *(string*)b) == 0) return -1;
+    return 1;
 }

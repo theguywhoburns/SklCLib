@@ -1,52 +1,23 @@
 #include <sklc_lib/utils/string.h>
 #include <sklc_lib/utils/vector.h>
-
+#include <sklc_lib/utils/logger.h>
+#include <Windows.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+int main(int argc, char* argv[]) {
+    
+    string str = STRING_VIEW("This is a test string.wfsdfwtgrev that I.asdassd am using to test StringSplit", 57);
+    vector vec = StringSplit(str, STRING_VIEW(" .", 2));
 
-// Предполагаемые определения функций из sklc_lib
-void StringSlice(string* slice, string str, size_t start, size_t end);
-void vector_destroy(vector* vec);
+    uint64_t i;
+    for (i = 0; i < vec.length; i++) {
+        string* val = vec.pop_back(&vec);
+        SKLDEBUG("%s", val->data);
 
-// Функция для проверки равенства двух строк
-bool string_equals(string str1, string str2) {
-    if (str1.len != str2.len) return false;
-    return memcmp(str1.data, str2.data, str1.len) == 0;
-}
-
-// Тестовая функция
-void test_string_split() {
-    // Исходная строка для разделения
-    string testStr = {"This,is.a:test-string.piaijfp"};
-    
-    // Массив разделителей
-    string separators[] = {
-        STRING_VIEW(" ", 1), 
-        STRING_VIEW(".", 1), 
-        STRING_VIEW(",", 1), 
-        STRING_VIEW(";", 1), 
-        STRING_VIEW(":", 1), 
-        STRING_VIEW("-", 1)
-        };
-    
-    // Разделение строки
-    vector result = StringSplitEx(testStr, 6, separators);
-    
-    // Вывод результатов
-    for (size_t i = 0; i < result.length; ++i) {
-        printf("Result[%zu]: %.*s\n", i, ((string*)result.data)[i].len, ((string*)result.data)[i].data);
-    }
-    
-    for (size_t i = 0; i < result.length; ++i) {
-        StringDestroy(&((string*)result.data)[i]);
+        StringDestroy(val);
+        free(val);
     }
 
-    // Освобождение памяти
-    vector_destroy(&result);
-}
+    vector_destroy(&vec);
 
-int main() {
-    test_string_split();
     return 0;
 }
