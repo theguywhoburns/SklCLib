@@ -165,7 +165,7 @@ int StringFind(string str, string to_find, int index) {
 }
 
 int  StringCompare(string str1, string str2) {
-    if(str1.len != str2.len) return str1.len - str2.len;
+    if(str1.len != str2.len) return (int)(str1.len - str2.len);
     for(uint64_t i = 0; i < str1.len; ++i) {
         if(str1.data[i] != str2.data[i]) return str1.data[i] - str2.data[i];
     }
@@ -205,7 +205,7 @@ void StringReverse(string* ret, string str) {
     ret->data = malloc(str.len + 1);
     ret->data[str.len] = '\0';
     int j = 0;
-    for(int i = str.len; i > 0; i--) {
+    for(uint64_t i = str.len; i > 0; i--) {
         ret->data[j] = str.data[i];
         j++;
     }
@@ -215,9 +215,47 @@ void StringReverse(string* ret, string str) {
 
 bool StringEndsWith(string str, string with) {
     if(str.len < with.len) return false;
-    int index_to_search_from = str.len - with.len;
+    int index_to_search_from = (int)(str.len - with.len);
     string to_search = STRING_VIEW(str.data + index_to_search_from, with.len);
     int found = StringFind(to_search, with, 1);
     if(found >= 0) return true;
     return false;
+}
+
+
+void IntToString(string* ret, int64_t val) {
+    string _ret = {0};
+    char buf[64];
+    snprintf(buf, 64, "%lld", val);
+    StringCreateEx(&_ret, buf, strlen(buf), true);
+    StringDestroy(ret);
+    *ret = _ret;
+}
+
+bool StringToInt(string str, int64_t* ret) {
+    assert(ret != NULL && "ret cannot be null");
+    int64_t val = 0;
+    if(sscanf(str.data, "%lld", (__int64*)val) != 1) {
+        return false;
+    }
+    *ret = val;
+    return true;
+}
+
+void FloatToString(string* ret, double val) {
+    string _ret = {0};
+    char buf[64];
+    snprintf(buf, 64, "%f", val);
+    StringCreateEx(&_ret, buf, strlen(buf), true);
+    StringDestroy(ret);
+    *ret = _ret;
+}
+
+bool StringToFloat(string str, double* ret) {
+    double val = 0;
+    if(sscanf(str.data, "%lf", &val) != 1) {
+        return false;
+    }
+    *ret = val;
+    return true;
 }

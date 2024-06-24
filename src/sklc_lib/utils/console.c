@@ -15,6 +15,8 @@ void SetConsoleColor(enum ConsoleColor bg_color, enum ConsoleColor fg_color, enu
   case ConsoleAttributeBold:
       attributes = FOREGROUND_INTENSITY;
     break;
+  default:
+    break;
   }
 
   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)(attributes | fg_color | (bg_color << 4)));
