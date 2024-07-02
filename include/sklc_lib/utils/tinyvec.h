@@ -35,18 +35,18 @@ void* _tinyvec_insert_at(void* tinyvec, uint64_t index, void* value_ptr);
 #define tinyvec_destroy(tinyvec) \
     _tinyvec_destroy(tinyvec);
 
-#define tinyvec_push(tinyvec, value) \
+#define tinyvec_push(T, tinyvec, value) \
     { \
-        typeof(value) temp = value; \
+        T temp = value; \
         tinyvec = _tinyvec_push(tinyvec, &temp); \
     }
 
 #define tinyvec_pop(tinyvec, value_ptr) \
     _tinyvec_pop(tinyvec, value_ptr)
 
-#define tinyvec_insert_at(tinyvec, index, value) \
+#define tinyvec_insert_at(T, tinyvec, index, value) \
     { \
-        typeof(value) temp = value; \
+        T temp = value; \
         tinyvec = _tinyvec_insert_at(tinyvec, index, &temp); \
     }
 

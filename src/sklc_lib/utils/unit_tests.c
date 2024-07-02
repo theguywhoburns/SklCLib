@@ -7,131 +7,117 @@
 #include <stdio.h>
 #include <time.h>
 
-void UnitTestHashFunc(string name, UnitTestFunc f) {
-	static bool initialized = false;
-	static uint64_t seed1 = 0;
-	static uint64_t seed2 = 0;
-	if(!initialized) {
-		initialized = true;
-		srand((uint32_t)time(NULL));
-		seed1 = rand();
-		seed2 = rand();
+void TestHandlerCreate(UnitTestHandler* handler, char* argv[]) {
+	handler->groups = vector_create(UnitTestGroup);
+	gc_start(&handler->gc, argv);
+}
+
+void TestHandlerDestroy(UnitTestHandler* handler) {
+	for(uint64_t i = 0; i < handler->groups.length; i++) {
+		UnitTestGroup* g = handler->groups.get_at(&handler->groups, i);
+		for(uint64_t j = 0; j < g->names.length; j++) {
+			StringDestroy(g->names.get_at(&g->names, j));
+		}
+		vector_destroy(&g->names);
+		vector_destroy(&g->tests);
 	}
-	return SIP64(name.data, name.len, seed1, seed2);
+	vector_destroy(&handler->groups);
+	gc_stop(&handler->gc);
 }
 
-UnitTestGroup* UnitTestHashCopyFunc(UnitTestGroup* group) {
-	UnitTestGroup* new_group = malloc(sizeof(UnitTestGroup));
-	StringDuplicate(&new_group->name, group->name);
-	new_group->tests = group->tests.copy(&group->tests);
-	return new_group;
-}
-
-
-void UnitTestHashDestroyFunc(UnitTestGroup* group) {
-	StringDestroy(&group->name);
-	vector_destroy(&group->tests);	
-}
-
-int UnitTestHashCmpFunc(UnitTestGroup* a, UnitTestGroup* b) {
-	return StringCompare(a->name, b->name);
-}
-
-void UnitTestErrVecDtor(struct _vector* vec, UnitTestError* val) {
-	StringDestroy(&val->file);
-	StringDestroy(&val->expected);
-	StringDestroy(&val->actual);
-}
-
-void InitTests(UnitTestHandler* handler) {
-	assert(handler != NULL && "handler cannot be null");
-	if(handler->tests != NULL) {
-		handler->tests->clear(handler->tests);
-	} else {
-		handler->tests = malloc(sizeof(hashmap));
-		hashmap_create(handler->tests,
-			UnitTestHashFunc,
-			__hashmap_destroy_string,
-			UnitTestHashDestroyFunc,
-			__hashmap_copy_string,
-			UnitTestHashCopyFunc,
-			__hashmap_compare_string,
-			UnitTestHashCmpFunc
-		);
-	}
-	handler->errors =	_vector_create(1, sizeof(UnitTestError), UnitTestErrVecDtor, __vector_def_val_cpy, __vector_def_cmp);
-}
-
-void DestroyTests(UnitTestHandler* handler) {
-	assert(handler != NULL && "handler cannot be null");
-	if(handler->tests != NULL) {
-		hashmap_destroy(handler->tests);
-		free(handler->tests);
-		handler->tests = NULL;
-	}
-	vector_destroy(&handler->errors);
-}
-
-void AddTest(UnitTestHandler* handler, string group_name, string name, UnitTestFunc test_func) {
-	assert(handler != NULL && "handler cannot be null");
-	assert(handler->tests != NULL && "UnitTestHandler is not initialized");
-	assert(test_func != NULL && "test_func cannot be null");
-	UnitTestGroup* group = (UnitTestGroup*)handler->tests->get(handler->tests, &group_name, false);
-	if(group == NULL) {
-		group = malloc(sizeof(UnitTestGroup));
-		*group = (UnitTestGroup){0};
-		StringDuplicate(&group->name, group_name);
-		vector_create(&group->tests);
-		handler->tests->set(handler->tests, &group_name, group);
-		group = (UnitTestGroup*)handler->tests->get(handler->tests, &group_name, false);
-		string _g = {0}; StringDuplicate(&_g, group_name);
-	}
-
-	group->tests.push_back(&group->tests, test_func);
-}
-
-void IterateTests(string* name, UnitTestGroup* group, UnitTestHandler* handler) {
-	assert(handler != NULL && "handler cannot be null");
-	assert(handler->tests != NULL && "UnitTestHandler is NULL");
-	assert(name != NULL && "Name cannot be null");
-	int errors = 0;
-	printf("Test group: \"%s\"\n", name->data);
-	for(int i = 0; i < group->tests.length; i++) {
-		UnitTestFunc test_func = *(UnitTestFunc*)group->tests.get_at(&group->tests, i);
-		assert(test_func != NULL && "INTERNAL ERROR: test_func cannot be null");
-		printf("Starting test #%d\n", i + 1, name->data);
-		if(!test_func(name, handler)) {
-			printf("Test \"%s\" failed\n", name->data);
-			printf("======================================\n");
-			for(int i = 0; i < handler->errors.length; i++) {
-				UnitTestError error = *(UnitTestError*)handler->errors.get_at(&handler->errors, i);
-				printf("Error: %s\n", error.file.data);
-				printf("Line: %d\n", error.line);
-				printf("Expected: \"%s\"\n", error.expected.data);
-				printf("Actual: \"%s\"\n", error.actual.data);
-				printf("======================================\n");
-			}
-		} else {
-			printf("Test #%d passed...\n", i + 1);
+void __AddTest(UnitTestHandler* handler, string group, string name, UnitTestFunc f) {
+	printf("Adding test %s.%s\n", group.data, name.data);
+	for(uint64_t i = 0; i < handler->groups.length; i++) {
+		UnitTestGroup* g = handler->groups.get_at(&handler->groups, i);
+		if(StringEquals(g->name, group)) {
+			string name_cpy = {0};
+			StringDuplicate(&name_cpy, name);
+			g->names.push_back(&g->tests, &name_cpy);
+			g->tests.push_back(&g->tests, &(function){(void*)f});
+			return;
 		}
 	}
-	printf("Test group \"%s\" finished with %d errors\n\n", name->data, errors);
+	printf("Group %s not found, creating it\n", group.data);
+	UnitTestGroup g = {0};
+	string name_cpy = {0};
+	StringDuplicate(&name_cpy, name);
+	StringDuplicate(&g.name, group);
+	g.names = vector_create(string);
+	g.tests = vector_create(UnitTestFunc);
+	g.names.push_back(&g.names, &name_cpy);
+	g.tests.push_back(&g.tests, &(function){(void*)f});
+	g.success = true;
+	handler->groups.push_back(&handler->groups, &g);
 }
 
-void RunAllTests(UnitTestHandler* handler, bool destroy_handler_after_run, char ***argv) {
-	assert(handler != NULL && "handler cannot be null");
-	assert(handler->tests != NULL && "UnitTestHandler is not initialized");
-	ResetConsoleColor();
-	printf("\n");
-	printf("<Running unit tests...>\n");
-	printf("<=====================>\n");
-	gc_start(&handler->gc, argv);
-	handler->tests->iterate(handler->tests, IterateTests, handler);
-	if(destroy_handler_after_run) {
-		DestroyTests(handler);
+string ErrTypeToString(enum ErrorType e) {
+	string ret = {0};
+	switch(e) {
+		case ERR_TRUE:
+			StringCreate(&ret, "true");
+			break;
+		case ERR_FALSE:
+			StringCreate(&ret, "false");
+			break;
+		case ERR_IF:
+			StringCreate(&ret, "if");
+			break;
+		case ERR_EQ:
+			StringCreate(&ret, "==");
+			break;
+		case ERR_NEQ:
+			StringCreate(&ret, "!=");
+			break;
+		case ERR_GT:
+			StringCreate(&ret, ">");
+			break;
+		case ERR_LT:
+			StringCreate(&ret, "<");
+			break;
+		case ERR_GTEQ:
+			StringCreate(&ret, ">=");
+			break;
+		case ERR_LTEQ:
+			StringCreate(&ret, "<=");
+			break;
+		default:
+			assert(false && "Unknown error type");
 	}
-	gc_stop(&handler->gc);
-	printf("<=====================>\n");
-	printf("<Finished unit tests.>\n");
-	ResetConsoleColor();
+	return ret;
+}
+
+void RunTests(UnitTestHandler* handler) {
+	for(uint64_t i = 0; i < handler->groups.length; i++) {
+		UnitTestGroup* g = handler->groups.get_at(&handler->groups, i);
+		for(uint64_t j = 0; j < g->names.length; j++) {
+			printf("Running test: %s.%s\n", g->name.data, ((string*)g->names.get_at(&g->names, j))->data);
+			UnitTestFunc* _f = g->tests.get_at(&g->tests, j);
+			UnitTestFunc f = *_f;
+			handler->errors = vector_create(UnitTestError);
+			if(!f(handler) || handler->errors.length > 0) {
+				printf("Test %s with #%llu errors...\n", g->success ? "passed" : "failed", handler->errors.length);
+				for(uint64_t k = 0; k < handler->errors.length; k++) {
+					UnitTestError* error = handler->errors.get_at(&handler->errors, k);
+					string err_type = ErrTypeToString(error->e);
+					printf("Type: %s File: %s - Line: %d\n", err_type.data, error->file.data, error->line);
+					StringDestroy(&err_type);
+					if(error->expected.len > 0) {
+						printf("Expected: %s\n", error->expected.data);
+					}
+					if(error->actual.len > 0) {
+						printf("Actual: %s\n", error->actual.data);
+					}
+					StringDestroy(&error->expected);
+					StringDestroy(&error->actual);
+					StringDestroy(&error->file);
+				}
+				vector_destroy(&handler->errors);
+				g->success = false;
+				return;
+			} else {
+				printf("Test passed\n");
+			}
+			vector_destroy(&handler->errors);
+		}
+	}
 }

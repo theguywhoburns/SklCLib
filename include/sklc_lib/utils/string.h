@@ -10,8 +10,8 @@ typedef struct string {
 } string;
 
 // Creates a string view that doesn't own it's memory
-#define STRING_VIEW(ccp, length) (string){.data = (ccp), .len = (length), .own = false}
-
+#define STRING_VIEW_(ccp, length) (string){.data = (ccp), .len = (length), .own = false}
+#define STRING_VIEW(ccp) STRING_VIEW_(ccp, StringLength(ccp))
 uint64_t StringLength(const char* str);
 
 void StringCreate(string* ret, const char* str);
@@ -35,6 +35,7 @@ vector StringSplit(string str, string separator);
 
 bool StringEquals(string str1, string str2);
 int  StringCompare(string str1, string str2);
+#define STRING_FIND_LAST -1
 int  StringFind(string str, string to_find, int index);
 
 void StringToUpper(string* ret, string str); 
@@ -43,10 +44,10 @@ void StringToLower(string* ret, string str);
 bool StringEndsWith(string str, string with);
 void StringReverse(string* ret, string str);
 
-void    IntToString(string* ret, int64_t val);
-int64_t StringToInt(string str);
-void    FloatToString(string* ret, float val);
-double  StringToFloat(string str);
+void IntToString(string* ret, int64_t val);
+bool StringToInt(string str, int64_t* ret);
+void FloatToString(string* ret, double val);
+bool StringToFloat(string str, double* ret);
 
 INLINE bool StringIsEmpty(string str) {
     return str.len == 0;

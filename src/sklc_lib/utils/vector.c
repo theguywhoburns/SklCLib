@@ -83,6 +83,9 @@ vector* _vector_create_ptr(uint64_t capacity, uint64_t stride,
 void vector_destroy(vector* vec) {
     free(vec->data);
     vec->data = NULL;
+    for(size_t i = 0; i < vec->length; i++) {
+        vec->value_destructor(vec, vec->get_at(vec, i));
+    }
     memset(vec, 0, sizeof(vector));
     if(vec->is_struct_ptr) free(vec);
 }

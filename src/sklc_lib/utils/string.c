@@ -42,8 +42,8 @@ void StringDestroy(string* str) {
         *str = (string){0};
         return;
     }
-    if(str->data != NULL) free(str->data);
-    *str = (string){0};
+    if(str != NULL && str->data != NULL) free(str->data);
+    else *str = (string){0};
 }
 
 void StringDuplicate(string* ret, string source) {
@@ -138,7 +138,7 @@ bool StringEquals(string str1, string str2) {
 }
 
 int StringFind(string str, string to_find, int index) {
-    if (to_find.len == 0 || str.len < to_find.len || index <= 0) {
+    if (to_find.len == 0 || str.len < to_find.len ) {
         return -1;
     }
 
@@ -153,7 +153,7 @@ int StringFind(string str, string to_find, int index) {
         }
         if (found) {
             occurrence++;
-            if (occurrence == index) {
+            if (occurrence-1 == index) {
                 return (int)i; // Found the index-th occurrence
             }
             // Skip ahead to the end of the current occurrence to avoid overlapping matches
@@ -216,8 +216,8 @@ void StringReverse(string* ret, string str) {
 bool StringEndsWith(string str, string with) {
     if(str.len < with.len) return false;
     int index_to_search_from = (int)(str.len - with.len);
-    string to_search = STRING_VIEW(str.data + index_to_search_from, with.len);
-    int found = StringFind(to_search, with, 1);
+    string to_search = STRING_VIEW_(str.data + index_to_search_from, with.len);
+    int found = StringFind(to_search, with, 0);
     if(found >= 0) return true;
     return false;
 }

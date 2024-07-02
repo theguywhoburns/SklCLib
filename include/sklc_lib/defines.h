@@ -15,6 +15,12 @@
 #define NOINLINE
 #endif
 
+#if defined(_MSC_VER)
+#define STATIC_ASSERT(statement) static_assert(statement, #statement)
+#else
+#define STATIC_ASSERT(statement) _Static_assert(statement, #statement)
+#endif
+
 #if defined(_WIN32) || defined(_WIN64) 
     #define SKLC_PLATFORM_WINDOWS
 #elif defined(__CYGWIN__) && !defined(_WIN32)
