@@ -3,7 +3,10 @@
 #include <sklc_lib/defines.h>
 #include <sklc_lib/utils/tinyvec.h>
 #include <sklc_lib/utils/string.h>
-#include <sklc_lib/utils/gc.h>
+#include <sklc_lib/compiler_utils/Error.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 enum TokenType {
 	TOKEN_EOF = 0, // Basically it says that TOKEN_EOF == NULL
@@ -23,6 +26,15 @@ typedef struct Token {
 } Token;
 
 typedef struct TokenStream TokenStream;
+struct TokenStream {
+	Error* err;
+	string file_name;
+	FILE* file_handle;
+	Token token;
+	uint64_t file_size;
+	size_t line;
+	size_t col;
+};
 
 /**
  * @brief Creates a new TokenStream object for reading tokens from the file specified by `path`.
@@ -30,7 +42,7 @@ typedef struct TokenStream TokenStream;
  * @param path The path to the file to read tokens from.
  * @return A pointer to the newly created TokenStream object, or `NULL` if an error occurred.
  */
-TokenStream* TokenStream_Create(const char* path, int* argc_start);
+TokenStream TokenStream_Create(const char* path);
 
 /**
  * @brief Returns the next token from the TokenStream.
@@ -51,5 +63,7 @@ Token TokenStream_Next(TokenStream* token);
  * @return The next token from the TokenStream.
  */
 Token TokenStream_Peek(TokenStream* token);
+
+void TokenStreamDisposeToken(TokenStream* ts, Token* t);
 
 void TokenStream_Destroy(TokenStream* ts);

@@ -1,18 +1,4 @@
 #include <sklc_lib/compiler_utils/lexer.h>
-#include <sklc_lib/compiler_utils/Error.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-struct TokenStream {
-	Error* err;
-	string file_name;
-	FILE* file_handle;
-	Token token;
-	uint64_t file_size;
-	size_t line;
-	size_t col;
-};
 
 bool IsSpace(char c) {
 	return c == ' ' || c == '\t' || c == '\n' || c == '\r';
@@ -63,8 +49,8 @@ bool IsSeparator(char c) {
 
 char* LexString(TokenStream* ts, FILE* f, size_t* line, size_t* col) {
   char* ret = NULL;
-  uint64_t len = 0;
-  uint64_t capacity = 256; // Initial buffer size
+  size_t len = 0;
+  size_t capacity = 256; // Initial buffer size
 
   ret = malloc(capacity);
   if (!ret) {
@@ -98,14 +84,17 @@ char* LexString(TokenStream* ts, FILE* f, size_t* line, size_t* col) {
 
     // Append character to the buffer
     if (len + 1 >= capacity) { // Check if the buffer is full
-      capacity *= 2; // Double the buffer size
-      char* new_ret = realloc(ret, capacity);
+      capacity *= 2; // Double the buffer size 
+      char* new_ret = malloc(capacity);
       if (!new_ret) {
         free(ret);
+		free(new_ret);
         tinyvec_push(Error, ts->err, Error_Create(*line, *col, ts->file_name, STRING_VIEW("Memory reallocation failure")));
         return NULL;
       }
-      ret = new_ret;
+	  memcpy(new_ret, ret, len);
+	  free(ret);
+	  ret = new_ret;
     }
 
     ret[len++] = c;
@@ -113,18 +102,23 @@ char* LexString(TokenStream* ts, FILE* f, size_t* line, size_t* col) {
     c = (char)fgetc(f);
 	}
 
-  ret[len] = '\0'; // Null-terminate the string
-
+  
+  /*
   // Check if the length is more than 20% less than the capacity
   if (len < capacity * 0.8) {
-    char* new_ret = realloc(ret, len + 1); // Reallocate to fit the actual string length
+    char* new_ret = malloc(len + 1); // Reallocate to fit the actual string length
     if (!new_ret) {
       free(ret);
+	  free(new_ret);
       tinyvec_push(Error, ts->err, Error_Create(*line, *col, ts->file_name, STRING_VIEW("Memory reallocation failure")));
       return NULL;
     }
+	memcpy(new_ret, ret, len);
     ret = new_ret;
   }
+  */
+
+  ret[len] = '\0'; // Null-terminate the string
   return ret;
 }
 
@@ -144,6 +138,7 @@ Token LexNumber(char start_c, TokenStream* ts, FILE* f, size_t* line, size_t* co
 		if(c == EOF) {
 			tinyvec_push(Error, ts->err, Error_Create(*line, *col, ts->file_name, STRING_VIEW("Unexpected EOF after number")));
 			free(data);
+			ret = (Token){ 0 };
 			return ret;
 		}
 		data[i] = c;
@@ -161,8 +156,8 @@ Token LexNumber(char start_c, TokenStream* ts, FILE* f, size_t* line, size_t* co
 
 char* LexIdentifier(char start_c, TokenStream* ts, FILE* f, size_t* line, size_t* col) {
 	char* ret = NULL;
-  uint64_t len = 0;
-  uint64_t capacity = 256; // Initial buffer size
+  size_t len = 0;
+  size_t capacity = 256; // Initial buffer size
 
   ret = malloc(capacity);
   if (!ret) {
@@ -171,38 +166,45 @@ char* LexIdentifier(char start_c, TokenStream* ts, FILE* f, size_t* line, size_t
 	}
 	char c = start_c;
   while (!IsSeparator(c) && c != EOF) {
-    
+    /*
     // Append character to the buffer
     if (len + 1 >= capacity) { // Check if the buffer is full
-      capacity += 256; // add 256 to the buffer size, cause doubling it each time will be too much
-      char* new_ret = realloc(ret, capacity);
-      if (!new_ret) {
-        free(ret);
-        tinyvec_push(Error, ts->err, Error_Create(*line, *col, ts->file_name, STRING_VIEW("Memory reallocation failure")));
-        return NULL;
-      }
-      ret = new_ret;
+		capacity += 256; // Double the buffer size 
+		char* new_ret = malloc(capacity);
+		if (!new_ret) {
+			free(ret);
+			free(new_ret);
+			tinyvec_push(Error, ts->err, Error_Create(*line, *col, ts->file_name, STRING_VIEW("Memory reallocation failure")));
+			return NULL;
+		}
+		memcpy(new_ret, ret, len);
+		free(ret);
+		ret = new_ret;
     }
-
+	*/
     ret[len++] = c;
     (*col)++;
 		c = (char)fgetc(f);
 	}
 	// Set the file offset to offset -1
 	fseek(f, -1, SEEK_CUR);
-
-  ret[len] = '\0'; // Null-terminate the string
-
+  /*
   // Check if the length is more than 20% less than the capacity
   if (len < capacity * 0.8) {
-    char* new_ret = realloc(ret, len + 1); // Reallocate to fit the actual string length
+    char* new_ret = malloc(len + 1); // Reallocate to fit the actual string length
     if (!new_ret) {
       free(ret);
+	  free(new_ret);
       tinyvec_push(Error, ts->err, Error_Create(*line, *col, ts->file_name, STRING_VIEW("Memory reallocation failure")));
       return NULL;
     }
+	memcpy(new_ret, ret, len);
     ret = new_ret;
   }
+  */
+
+  ret[len] = '\0'; // Null-terminate the string
+
   return ret;
 }
 
@@ -257,6 +259,8 @@ Token LexNextToken(TokenStream* ts, FILE* f, size_t* line, size_t* col) {
 		ret.data = malloc(2);
 		if (!ret.data) {
 			tinyvec_push(Error, ts->err, Error_Create(*line, *col, ts->file_name, STRING_VIEW("Memory allocation failure")));
+			ret.type = TOKEN_EOF;
+
 			return ret;
 		}
 		ret.data[0] = c;
@@ -268,56 +272,59 @@ Token LexNextToken(TokenStream* ts, FILE* f, size_t* line, size_t* col) {
 		col++;
 		ret.type = TOKEN_STRING;
 		ret.data = LexString(ts, f, line, col);
-		ret.datalen = strlen(ret.data);
-		if(!ret.data) {
+		if(ret.data == NULL) {
 			ret.type = TOKEN_EOF;
 			return ret;
 		}
+		ret.datalen = strlen(ret.data);
 		return ret;
 	}break;
 	default:
 		if(c >= '0' && c <= '9') {
 			ret = LexNumber(c, ts, f, line, col);
+			if(ret.data == NULL) {
+				ret.type = TOKEN_EOF;
+				return ret;
+			}
 			return ret;
 		}
 		ret.type = TOKEN_IDENTIFIER;
 		ret.data = LexIdentifier(c, ts, f, line, col);
-		ret.datalen = strlen(ret.data);
-		if(!ret.data) {
+		if(ret.data == NULL) {
 			ret.type = TOKEN_EOF;
 			return ret;
 		}
+		ret.datalen = strlen(ret.data);
 		return ret;
 		break;
 	}
 	return ret;
 }
 
-TokenStream* TokenStream_Create(const char* path, int* argc_start) {
+TokenStream TokenStream_Create(const char* path) {
 	FILE* file_handle = fopen(path, "r");
 	if(file_handle == NULL) {
-		return NULL;
+		return (TokenStream){0};
 	}
-	TokenStream* ts = malloc(sizeof(TokenStream));
-	*ts = (TokenStream) {0};
-	ts->file_handle = file_handle;
+	TokenStream ts = {0};
+	ts.file_handle = file_handle;
 	fseek(file_handle, 0, SEEK_END);
-	ts->file_size = ftell(file_handle);
+	ts.file_size = ftell(file_handle);
 	fseek(file_handle, 0, SEEK_SET);
-	StringCreate(&ts->file_name, path);
-	ts->err = tinyvec_create(Error);
-	ts->token = LexNextToken(ts, file_handle, &ts->line, &ts->col);
-	if(tinyvec_length(ts->err) > 0) {
-		for(int i = 0; i < tinyvec_length(ts->err); i++) {
-			Error err = ts->err[i];
+	StringCreate(&ts.file_name, path);
+	ts.err = tinyvec_create(Error);
+	// Force call LexNextToken for the first time
+	ts.token = LexNextToken(&ts, file_handle, &ts.line, &ts.col);
+	if(tinyvec_length(ts.err) > 0) {
+		for(int i = 0; i < tinyvec_length(ts.err); i++) {
+			Error err = ts.err[i];
 			Error_print(&err);
 			Error_Destroy(&err);
 		}
-		tinyvec_destroy(ts->err);
-		fclose(ts->file_handle);
-		StringDestroy(&ts->file_name);
-		free(ts);
-		return NULL;
+		tinyvec_destroy(ts.err);
+		fclose(ts.file_handle);
+		StringDestroy(&ts.file_name);
+		return (TokenStream){0};
 	}
 	return ts;
 }
@@ -335,10 +342,20 @@ Token TokenStream_Peek(TokenStream* ts) {
 	return ts->token;
 }
 
+void TokenStreamDisposeToken(TokenStream* ts, Token* t) {
+	if(!ts || !t) return;
+	if(t->data != NULL) free(t->data);
+	t->data = NULL;
+	t->datalen = 0;
+	t->type = TOKEN_EOF;
+	t->line = 0;
+	t->col = 0;
+}
+
 void TokenStream_Destroy(TokenStream* ts) {
 	if(!ts) return;
-	tinyvec_destroy(ts->err);
-	StringDestroy(&ts->file_name);
-	fclose(ts->file_handle);
-	free(ts);
+	if(ts->err  != NULL) { tinyvec_destroy(ts->err); ts->err = NULL; }
+	if(ts->file_name.data != NULL){ StringDestroy(&ts->file_name); ts->file_name.data = NULL; }
+	if(ts->file_handle  != NULL) 	{ fclose(ts->file_handle); ts->file_handle = NULL; }
+	TokenStreamDisposeToken(ts, &ts->token);
 }
